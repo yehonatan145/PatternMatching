@@ -2,4 +2,12 @@
 ******** I N S T A L L A T I O N      I N S T R U C T I O N S *********
 ***********************************************************************
 
-1. run setup.sh
+1. install the next dependencies:
+
+	for pulled-pork:
+*		libcrypt-ssleay-perl
+*		liblwp-useragent-determined-perl
+
+	(just run on terminal: "sudo apt-get install -y libcrypt-ssleay-perl liblwp-useragent-determined-perl")
+
+2. run setup.sh (no need for superuser access)

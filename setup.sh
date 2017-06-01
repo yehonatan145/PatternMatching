@@ -1,4 +1,6 @@
 #!/bin/bash
 
-git clone https://github.com/shirkdog/pulledpork
+# setup pulled-pork
 
+
+Dictionaries/update-pulled-pork.sh
