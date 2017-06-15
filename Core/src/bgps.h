@@ -19,10 +19,10 @@
 typedef unsigned long long pos_t;
 #define LOG printf
 
-/*
-Because we check each stage every log(n) characters, we might not report in time on the last one.
-In order to solve this, whenever we have a VO in the last stage (and in 1-before-last in case that the length
-difference between the last and 1-before-last stages is smaller than log(n)), we need to check them every char.
+/**
+* Because we check each stage every log(n) characters, we might not report in time on the last one.
+* In order to solve this, whenever we have a VO in the last stage (and in 1-before-last in case that the length
+* difference between the last and 1-before-last stages is smaller than log(n)), we need to check them every char.
 */
 #define BG_HAVE_LAST_STAGE_FLAG				0x1 // States that we have VO in last stage
 #define BG_HAVE_BEFORE_LAST_STAGE_FLAG		0x2 // States that we have VO in 1-before-last stage
@@ -34,9 +34,9 @@ difference between the last and 1-before-last stages is smaller than log(n)), we
 
 
 
-/*
-struct for saving information about a position in the stream.
-This could be used to save info from the start of the stream, or from another position.
+/**
+* Struct for saving information about a position in the stream.
+* This could be used to save info from the start of the stream, or from another position.
 */
 typedef struct {
 	FieldVal r;
@@ -44,8 +44,8 @@ typedef struct {
 	fingerprint_t fp; // The fingerprint until pos NOT INCLUDE pos ITSELF
 } PosInfo;
 
-/*
-struct for saving linear progression of VOS in the same stage
+/**
+* Struct for saving linear progression of VOS in the same stage
 */
 typedef struct {
     PosInfo first; // The information about the first char of the first VO from the start of the stream
@@ -62,8 +62,8 @@ typedef struct {
     int n; // The number of VOs
 } VOLinearProgression;
 
-/*
-struct for holding all the information about the pattern that we need to know
+/**
+* Struct for holding all the information about the pattern that we need to know
 */
 typedef struct {
 	
@@ -86,14 +86,14 @@ typedef struct {
 	KMPRealTime			*kmp_remaining; // kmp struct for the remaining of first stage (after the periods)
 	fingerprint_t		*last_fps; // Saves last logn figerprints
 
-	int n;
+	size_t n;
 	int flags;
-	int logn;
-	int loglogn; // ceil(log(log(n))) + 1
-	int first_stage; // The first stage
-	int current_stage; // This is the index in vos, the real stage is current_stage + first_stage
+	size_t logn;
+	size_t loglogn; // ceil(log(log(n))) + 1
+	size_t first_stage; // The first stage
+	size_t current_stage; // This is the index in vos, the real stage is current_stage + first_stage
 	int n_kmp_period; // The number of periods that there are in first stage
-	int current_n_kmp_period;
+	int current_n_kmp_period; // The number of periods currently matched
 } BGStruct;
 
 // Calculate number of stage given BGStruct
@@ -106,7 +106,7 @@ typedef struct {
 ******************************************************************************************************/
 
 // TODO think of way to get rid of p
-BGStruct* bg_new(char* pattern, int n, field_t p);
+BGStruct* bg_new(char* pattern, size_t n, field_t p);
 int bg_read_char(BGStruct* bg, char c);
 void bg_free(BGStruct* bg);
 

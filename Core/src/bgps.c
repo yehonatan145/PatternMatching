@@ -65,13 +65,13 @@
 
 void print_BG_after_char(BGStruct* bg);
 
-/*
-Calculate log2 of given number.
-
-@param x        The number to calculate log2 on
-@param ceil     Whether to ceil the result (otherwise its floor)
-
-@return         The log2 of x (ceiled/floored according to ceil parameter)
+/**
+* Calculate log2 of given number.
+*
+* @param x        The number to calculate log2 on
+* @param ceil     Whether to ceil the result (otherwise its floor)
+*
+* @return         The log2 of x (ceiled/floored according to ceil parameter)
 */
 int bg_log2(field_t x, int ceil)
 {
@@ -99,17 +99,17 @@ int bg_log2(field_t x, int ceil)
 
 
 
-/*
-Find until where the period of pattern[0..n-1] continue in pattern[0..all-1].
-
-@param pattern  The pattern itself
-@param all      The length of the all pattern
-@param n        The length of the sub-pattern which we have period of
-@param period   The period length of pattern[0..n-1] (assumes that the period is correct)
-
-@return         The last position in which the period of pattern[0..n-1], is continued in pattern[0..all-1]
+/**
+* Find until where the period of pattern[0..n-1] continue in pattern[0..all-1].
+* 
+* @param pattern  The pattern itself
+* @param all      The length of the all pattern
+* @param n        The length of the sub-pattern which we have period of
+* @param period   The period length of pattern[0..n-1] (assumes that the period is correct)
+*
+* @return         The last position in which the period of pattern[0..n-1], is continued in pattern[0..all-1]
 */
-int _bgps_find_period_continue(char* pattern, int all, int n, int period) {
+size_t _bgps_find_period_continue(char* pattern, size_t all, size_t n, size_t period) {
     for ( ; n < all; n++) {
         if (pattern[n] != pattern[n % period]) {
             return n - 1;
@@ -118,23 +118,23 @@ int _bgps_find_period_continue(char* pattern, int all, int n, int period) {
     return n - 1; // if got here, the all patern have the same period (n == all)
 }
 
-/*
-Initializes the kmp in the bg struct.
-
-Following members of bg MUST to be already initialized:
-    n
-    loglogn
-
-Initializes:
-    first_stage
-    kmp_period
-    kmp_remaining
-    n_kmp_period
-    current_n_kmp_period
-    last_kmp_period_match_pos
-
-@param bg       The bg struct we work on
-@param pattern  The pattern of the bg struct
+/**
+* Initializes the kmp in the bg struct.
+*
+* Following members of bg MUST to be already initialized:
+*   n
+*   loglogn
+*
+* Initializes:
+*   first_stage
+*   kmp_period
+*   kmp_remaining
+*   n_kmp_period
+*   current_n_kmp_period
+*   last_kmp_period_match_pos
+*
+* @param bg       The bg struct we work on
+* @param pattern  The pattern of the bg struct
 */
 void _bgps_init_kmp(BGStruct* bg, char* pattern) {
     int stage_loglogn_period = kmp_get_period(pattern, 1 << bg->loglogn);
@@ -153,29 +153,29 @@ void _bgps_init_kmp(BGStruct* bg, char* pattern) {
     bg->last_kmp_period_match_pos = 0;
 }
 
-/*
-Initializes the fps of all stages in the bg struct
-
-Following members of bg MUST be already initialized:
-    logn
-    first_stage
-    r
-    p
-    flags
-
-Initialize:
-	first_stage_r ( = r^(2^first_stage - 1) )
-    fps
-    determine value of BG_NEED_BEFORE_LAST_STAGE_FLAG
-
-@param bg       The bg struct
-@param pattern  The pattern of the bg struct
+/**
+* Initializes the fps of all stages in the bg struct
+*
+* Following members of bg MUST be already initialized:
+*   logn
+*   first_stage
+*   r
+*   p
+*   flags
+*
+* Initialize:
+*   first_stage_r ( = r^(2^first_stage - 1) )
+*   fps
+*   determine value of BG_NEED_BEFORE_LAST_STAGE_FLAG
+*
+* @param bg       The bg struct
+* @param pattern  The pattern of the bg struct
 */
 void _bgps_init_fps(BGStruct* bg, char* pattern) {
     bg->fps = (fingerprint_t*) malloc ((N_STAGES(bg) + 1) * sizeof(fingerprint_t));    
-    // there is N_STAGES + 1 fingerprints, because the all pattern's fingerprint must be saved, but it is not a stage.
+    // There is N_STAGES + 1 fingerprints, because the all pattern's fingerprint must be saved, but it is not a stage.
     FieldVal rn;
-    int first_stage = bg->first_stage;
+    size_t first_stage = bg->first_stage;
     bg->fps[0] = calc_fp(pattern, 1 << first_stage, &rn, &bg->r, bg->p);
     field_div(&bg->first_stage_r, &rn, &bg->r, bg->p); // now, first_stage_rn == r^(2^first_stage - 1)
     int i = first_stage + 1;
@@ -183,7 +183,7 @@ void _bgps_init_fps(BGStruct* bg, char* pattern) {
         bg->fps[i - first_stage] = 
             calc_fp_with_prefix(pattern, 1 << i, bg->fps[i - first_stage - 1], 1 << (i - 1), &rn, &bg->r, bg->p);
     }
-    // now i is logn, but we prefer to write i because it in cache
+    // Now i is logn, but we prefer to write i because it in cache
     bg->fps[i - bg->first_stage] =
         calc_fp_with_prefix(pattern, bg->n, bg->fps[i - bg->first_stage - 1], 1 << (i - 1), &rn, &bg->r, bg->p);
     if (bg->n - (1 << (i - 1)) < bg->logn) {
@@ -191,15 +191,15 @@ void _bgps_init_fps(BGStruct* bg, char* pattern) {
     }
 }
 
-/*
-Create new BGStruct accoring to a specific pattern
-
-@param pattern  The pattern to search
-@param n        The pattern length
-
-@return		Dynamic allocated BGStruct to use on stream
+/**
+* Create new BGStruct accoring to a specific pattern
+*
+* @param pattern  The pattern to search
+* @param n        The pattern length
+*
+* @return		Dynamic allocated BGStruct to use on stream
 */
-BGStruct* bg_new(char* pattern, int n, field_t p) {
+BGStruct* bg_new(char* pattern, size_t n, field_t p) {
     BGStruct* bg = (BGStruct*) malloc (sizeof(BGStruct));
     memset(bg, 0, sizeof(BGStruct));
     bg->n = n;
@@ -238,18 +238,18 @@ BGStruct* bg_new(char* pattern, int n, field_t p) {
     return bg;
 }
 
-/*
-Add new VO to the VOs (if possible)
-
-@param vos      The VOs linear progression
-@param pos      The position of the VO we want to add (first character of the VO)
-@param fp       The fingerprint of the all stream until pos NOT INCLUDE pos (i.e. fp(stream[0..pos-1]) )
-@param rn       r^pos
-@param p        The size of the field
-
-@return         0 - failed
-				1 - succeed
-				2 - the VOs was empty (after the call, number of VOs is 1)
+/**
+* Add new VO to the VOs (if possible)
+*
+* @param vos      The VOs linear progression
+* @param pos      The position of the VO we want to add (first character of the VO)
+* @param fp       The fingerprint of the all stream until pos NOT INCLUDE pos (i.e. fp(stream[0..pos-1]) )
+* @param rn       r^pos
+* @param p        The size of the field
+*
+* @return       0 - failed
+*				1 - succeed
+*				2 - the VOs was empty (after the call, number of VOs is 1)
 */
 int _bgps_add_vo(VOLinearProgression* vos, pos_t pos, fingerprint_t fp, FieldVal* rn, field_t p) {
 	//printf("add vo pos = %llu\n", pos);
@@ -274,14 +274,14 @@ int _bgps_add_vo(VOLinearProgression* vos, pos_t pos, fingerprint_t fp, FieldVal
     return 1;
 }
 
-/*
-Remove the first VO from the VOs linear progression.
-
-@param vos		The VOs linear progression
-@param p		The size of the field
-
-@return			0 - there are still VOs left
-				1 - the VOs is now empty
+/**
+* Remove the first VO from the VOs linear progression.
+*
+* @param vos	The VOs linear progression
+* @param p		The size of the field
+*
+* @return		0 - there are still VOs left
+*				1 - the VOs is now empty
 */
 int _bgps_remove_first_vo(VOLinearProgression* vos, field_t p) {
 	//printf("remove vo pos = %llu, n = %d\n", vos->first.pos, vos->n);
@@ -299,33 +299,33 @@ int _bgps_remove_first_vo(VOLinearProgression* vos, field_t p) {
 	}
 }
 
-/*
-Check whether we can upgrade the first VO in a stage to the next stage.
-
-If there been at least 2^(stage_num+1) characters between the first vo and the current character,
-it means that we need to remove this vo from the stage, and check whether it is match the next stage.
-The VO match the next stage if:
-	- The fingerprint of the VO block at stage stage_num+1 ( fp( stream[VO.pos .. VO.pos+2^(stage_num+1)] ) )
-	  	match the fingerprint of stage stage_num+1 in the pattern.
-	- The VO is linear progression with the other VOs in stage stage_num+1.
-
-Change flags BG_HAVE_LAST_STAGE_FLAG, BG_HAVE_BEFORE_LAST_STAGE_FLAG if needed.
-
-@param bg			The bg struct
-@param stage_num	The stage number as indexed in vos & fps (real stage is first_stage + parameter)
-
-@return		If we found that the first vo should be upgraded to the next stage,
-			but it don't fit to the next stage's linear progression, reutrn 0.
-			Otherwise return 1.
+/**
+* Check whether we can upgrade the first VO in a stage to the next stage.
+*
+* If there been at least 2^(stage_num+1) characters between the first vo and the current character,
+* it means that we need to remove this vo from the stage, and check whether it is match the next stage.
+* The VO match the next stage if:
+*	- The fingerprint of the VO block at stage stage_num+1 ( fp( stream[VO.pos .. VO.pos+2^(stage_num+1)] ) )
+*	  	match the fingerprint of stage stage_num+1 in the pattern.
+*	- The VO is linear progression with the other VOs in stage stage_num+1.
+*
+* Change flags BG_HAVE_LAST_STAGE_FLAG, BG_HAVE_BEFORE_LAST_STAGE_FLAG if needed.
+*
+* @param bg			The bg struct
+* @param stage_num	The stage number as indexed in vos & fps (real stage is first_stage + parameter)
+*
+* @return		If we found that the first vo should be upgraded to the next stage,
+*			    but it don't fit to the next stage's linear progression, return 0.
+*			    Otherwise return 1.
 */
-int _bgps_vo_stage_upgrade(BGStruct* bg, int stage_num) {
+int _bgps_vo_stage_upgrade(BGStruct* bg, size_t stage_num) {
 	//printf("upgrade first vo of stage %d\n", stage_num);
 	VOLinearProgression* vos = &bg->vos[stage_num];
 	VOLinearProgression* next_vos = &bg->vos[stage_num + 1];
 	if (vos->n == 0) {
 		return 1;
 	}
-	int real_next_stage = bg->first_stage + stage_num + 1;
+	size_t real_next_stage = bg->first_stage + stage_num + 1;
 	// end_pos is the position of the last character of the pattern of next stage starting at the first VO.
 	pos_t end_pos = vos->first.pos + (real_next_stage == bg->logn ? bg->n : 1 << real_next_stage);
 	//printf("end_pos = %llu, current_pos = %llu\n", end_pos, bg->current_pos);
@@ -362,12 +362,12 @@ int _bgps_vo_stage_upgrade(BGStruct* bg, int stage_num) {
 	return 1;
 }
 
-/*
-Check the last (and maybe before last) stage(s), because they need to be checked every char.
-
-@param bg   The bg struct
-
-@return     Whether the last stage match.
+/**
+* Check the last (and maybe before last) stage(s), because they need to be checked every char.
+*
+* @param bg   The bg struct
+*
+* @return     Whether the last stage match.
 */
 int _bgps_check_last_stages(BGStruct* bg) {
 	//printf("check last stage(s)\n");
@@ -396,19 +396,19 @@ int _bgps_check_last_stages(BGStruct* bg) {
 	return ret;
 }
 
-/*
-Check whether we have a match of the first stage.
-
-@param bg       The bg struct
-@param c        The char just read
-
-@return         Whether the first stage has a match
+/**
+* Check whether we have a match of the first stage.
+*
+* @param bg       The bg struct
+* @param c        The char just read
+*
+* @return         Whether the first stage has a match
 */
 int _bgps_check_first_stage(BGStruct* bg, char c) {
 	//printf("check first stage\n");
-	// In any case, we need to gave c to kmp_period (and kmp_remaining if exist)
+	// In any case, we need to give c to kmp_period (and kmp_remaining if exist)
 	int kmp_period_match = kmp_read_char(bg->kmp_period, c);
-	int period_len = kmp_get_pattern_len(bg->kmp_period);
+	size_t period_len = kmp_get_pattern_len(bg->kmp_period);
 
 	if (kmp_period_match) { // if there was a match in kmp_period
 		if (bg->last_kmp_period_match_pos + period_len == bg->current_pos) {
@@ -451,13 +451,13 @@ int _bgps_check_first_stage(BGStruct* bg, char c) {
 	return 0;
 }
 
-/*
-Read char and return whether we have a match.
-
-@param bg	The BGStruct of the pattern we want to search
-@param c	The new character from the stream
-
-@return		1 if found pattern, 0 if not
+/**
+* Read char and return whether we have a match.
+*
+* @param bg	The BGStruct of the pattern we want to search
+* @param c	The new character from the stream
+*
+* @return		1 if found pattern, 0 if not
 */
 int bg_read_char(BGStruct* bg, char c) {
 	if (bg->flags & BG_SHORT_PATTERN_FLAG) {
@@ -496,10 +496,10 @@ int bg_read_char(BGStruct* bg, char c) {
     return ret;
 }
 
-/*
-free memory of BGStruct
-
-@param bg	the BGStruct to free
+/**
+* Free memory of BGStruct
+*
+* @param bg	the BGStruct to free
 */
 void bg_free(BGStruct* bg) {
 	if (!bg) return;

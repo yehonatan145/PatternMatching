@@ -21,8 +21,8 @@
 
 typedef unsigned long long field_t;
 
-/*
-struct for saving value in field and it's inverse
+/**
+* Struct for saving value in field and it's inverse
 */
 typedef struct {
 	field_t val;
@@ -45,13 +45,13 @@ static inline void field_copy(FieldVal* dst, FieldVal* src) {
     dst->inv = src->inv;
 }
 
-/*
-Divide in the field.
-
-@param dst          The value to put the result numerator/denomerater in
-@param numerator    The numerator of the division
-@param denomerator  The denomerator of the division
-@param p			The size of the field
+/**
+* Divide in the field.
+*
+* @param dst          The value to put the result numerator/denomerater in
+* @param numerator    The numerator of the division
+* @param denomerator  The denomerator of the division
+* @param p			The size of the field
 */
 static inline void field_div(FieldVal* dst, FieldVal* numerator, FieldVal* denomerator, field_t p) {
     // since if dst == denomerator, when we change dst->val we also change denomerator->val
@@ -61,13 +61,13 @@ static inline void field_div(FieldVal* dst, FieldVal* numerator, FieldVal* denom
     dst->inv = (den_val * numerator->inv) % p;
 }
 
-/*
-Divide in the field.
-
-@param dst          The value to put the result numerator/denomerater in
-@param numerator    The numerator of the division
-@param denomerator  The denomerator of the division
-@param p			The size of the field
+/**
+* Multiply in the field.
+*
+* @param dst          The value to put the result numerator/denomerater in
+* @param numerator    The numerator of the division
+* @param denomerator  The denomerator of the division
+* @param p			The size of the field
 */
 static inline void field_mul(FieldVal* dst, FieldVal* val1, FieldVal* val2, field_t p) {
     dst->val = (val1->val * val2->val) % p;
