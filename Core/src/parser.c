@@ -23,17 +23,20 @@ int get_binary_val(char bin) {
 * 
 * @param line	The line in the dictionary file
 * @param n		The length of the line
-* @param ret	Where to put the final pattern
+* @param ret	Where to put the final pattern (override old value)
 *
 * @return		The length of the final pattern (that was put in ret)
 */
 size_t parse_pattern_from_line(char* line, size_t n, char** ret) {
+	if (n == 0) {
+		return 0;
+	}
 	char* pattern = (char*) malloc(n);
 	size_t len = 0, pos = 0, first, second, err = 0;
 	while (pos < n && !err) {
 		if (line[pos] == '|') {
 			++pos;
-			while (line[pos] != '|') {
+			while (pos < n && line[pos] != '|') {
 				skip_spaces(line, pos);
 				first = get_bin_val(line[pos]);
 				++pos;
@@ -46,6 +49,7 @@ size_t parse_pattern_from_line(char* line, size_t n, char** ret) {
 				}
 				pattern[len++] = (char)(first * 16 + second);
 			}
+			if (pos >= n) err = 1;
 			++pos;
 		} else {
 			pattern[len++] = line[pos++];
