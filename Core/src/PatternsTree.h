@@ -91,18 +91,12 @@ typedef pattern_id_t PatternTreeNode*;
 *         F U N C T I O N S
 **************************************************************************************/
 
-/**
-* build the patterns tree from the dictionary files in conf
-*/
-PatternsTree* build_patterns_tree(Conf* conf);
-
 FullPatternsTree* fpt_build(Conf* conf);
 void fpt_free(FullPatternsTree* full_tree);
 
-/**
-* free all memory used by the patterns tree
-*/
-void free_patterns_tree(PatternsTree* tree);
+
+PatternsTree* patterns_tree_build(Conf* conf);
+void patterns_tree_free(PatternsTree* tree);
 
 /**
 * Copy the internal id content

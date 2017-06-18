@@ -1,12 +1,14 @@
 #ifndef MPS_H
 #define MPS_H
 
+#include "PatternsTree.h"
+
 /**
 * API for Multi-Pattern searching algorithms
 */
 
 typedef (void*)(mps_new_func*)(void);
-typedef (void)(mps_add_pattern_func*)(void*, char*, int);
+typedef (void)(mps_add_pattern_func*)(void*, char*, size_t, pattern_id_t);
 typedef (void)(mps_compile_func*)(void*);
 typedef (int)(mps_read_char_func*)(void*, char);
 typedef (void)(mps_free_func*)(void*);
@@ -60,5 +62,9 @@ void mps_register_searcher(char* names,
 }
 
 MPSearcherAPI mps_get_searcher(char* name);
+
+
+PatternsTree* convert_fpt_to_patterns_tree(Conf* conf, FullPatternsTree* full_tree,
+			void* mps_object, mps_add_pattern_func add_pattern_func)
 
 #endif /* MPS_H */
