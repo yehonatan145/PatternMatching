@@ -19,12 +19,12 @@ typedef struct {
 	BGNode* first_pat; // used only for the pattern gathering, not used after the struct was compiled.
 } MPBGStruct;
 
-void* mpbg_new(void);
-void mpbg_add_pattern(void* p, char* pat, int len);
-void mpbg_compile(void* p);
-int mpbg_read_char(void* p, char c);
-void mpbg_free(void* p);
+void* mpbg_create(void);
+void mpbg_add_pattern(void* obj, char* pat, size_t len, pattern_id_t id);
+void mpbg_compile(void* obj);
+pattern_id_t mpbg_read_char(void* obj, char c);
+void mpbg_free(void* obj);
 
-mps_register_searcher("breslauer-galil,breslauer galil,bg", mpbg_new, mpbg_add_pattern, mpbg_compile, mpbg_read_char, mpbg_free);
+void mps_bg_register();
 
 #endif /* MPBG_H */

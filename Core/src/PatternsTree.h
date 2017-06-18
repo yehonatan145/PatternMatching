@@ -3,7 +3,6 @@
 #define PATTERNS_TREE_H
 
 #define _GNU_SOURCE
-#include "conf.h"
 #include "parser.h"
 #include "utils.h"
 #include <stdio.h>
@@ -28,34 +27,34 @@ typedef struct {
 	int line_number;
 } PatternInternalID;
 
-//====================== FPT = Full Patterns Tree ======================
-struct s_FPTNode;
+//====================== Fpt = Full Patterns Tree ======================
+struct s_FptNode;
 
 /**
 * Struct for holding a list of childs of a node
 */
-typedef struct s_FPTEdge {
-	struct s_FPTNode* node;
-	struct s_FPTEdge* next;
-	struct s_FPTEdge* prev;
+typedef struct s_FptEdge {
+	struct s_FptNode* node;
+	struct s_FptEdge* next;
+	struct s_FptEdge* prev;
 	char* text;
 	size_t len;
-} FPTEdge;
+} FptEdge;
 
 /**
 * Struct for a node in the full patterns tree
 */
-typedef struct s_FPTNode {
-	struct s_FPTNode* parent;
+typedef struct s_FptNode {
+	struct s_FptNode* parent;
 	PatternInternalID id;
-	FPTEdge* edge_list;
-} FPTNode;
+	FptEdge* edge_list;
+} FptNode;
 
 /**
 * Struct for the full patterns tree
 */
 typedef struct s_FullPatternsTree {
-	FPTNode* root;
+	FptNode* root;
 } FullPatternsTree;
 
 
@@ -91,11 +90,13 @@ typedef pattern_id_t PatternTreeNode*;
 *         F U N C T I O N S
 **************************************************************************************/
 
-FullPatternsTree* fpt_build(Conf* conf);
+FullPatternsTree* fpt_build(struct _Conf* conf);
 void fpt_free(FullPatternsTree* full_tree);
 
+PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, size_t max_pat_len
+			void* mps_obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t))
 
-PatternsTree* patterns_tree_build(Conf* conf);
+PatternsTree* patterns_tree_build(struct _Conf* conf, void* mps_obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t))
 void patterns_tree_free(PatternsTree* tree);
 
 /**

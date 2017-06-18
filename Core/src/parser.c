@@ -1,4 +1,8 @@
+#include <unistd.h>
 #include "parser.h"
+#include "conf.h"
+#include "util.h"
+#include "mps.h"
 
 // get index to the next index in which there is no space
 #define skip_spaces(arr, index) while(arr[index] == ' ') ++index
@@ -66,8 +70,71 @@ size_t parse_pattern_from_line(char* line, size_t n, char** ret) {
 }
 
 /**
-* Parse the main arguments for the program and updates global data accordingly
+* Parse the main arguments for the program and updates configuration data accordingly
 */
-void parse_arguments(int argv, char* argc[], Conf* conf) {
-	// TODO: implement
+void parse_arguments(int argc, char* argv[], Conf* conf) {
+	int opt, algo;
+	size_t n_dict = 0, n_stream = 0, n_output = 0, dict_ind = 0, stream_ind = 0;
+	
+	opterr = 0;
+	while ((opt = getopt(argc, argv, "d:s:o:a:")) != -1) {
+		switch (opt) {
+			case 'd': ++n_dict; break;
+			case 's': ++n_streams; break;
+			case 'o': ++n_output; break;
+			default: break;
+		}
+	}
+	if (n_output > 1) {
+		// more than one output file, error
+		fprintf(stderr, 'Error: have more than one output file');
+		print_usage_and_exit();
+	}
+	conf->n_dictionary_files = n_dict;
+	conf->n_stream_files = n_stream;
+	conf->dictionary_files = (char**) malloc(n_dict);
+	conf->stream_files = (char**) malloc(n_stream);
+	conf->mps_algo = default_mps_algo;
+	optind = 1;
+	while ((opt = getopt(argc, argv, "d:s:o:a:"))) {
+		switch (opt) {
+		case 'd':
+			conf->dictionary_files[dict_ind] = (char*) malloc(strlen(optarg) + 1);
+			strcpy(conf->dictionary_files[dict_ind], optarg);
+			++dict_ind;
+			break;
+		case 's':
+			conf->stream_files[stream_ind] = (char*) malloc(strlen(optarg) + 1);
+			strcpy(conf->stream_files[stream_ind], optarg);
+			++stream_ind;
+			break;
+		case 'o':
+			conf->output_file_name = (char*) malloc(strlen(optarg) + 1);
+			strcpy(conf->output_file_name, optarg);
+			break;
+		case 'a':
+			algo = get_mps_algo(optarg);
+			if (algo == -1) {
+				fprintf(stderr, "Don't have algorithm %s.\n", optarg);
+				print_usage_and_exit();
+			} else {
+				conf->mps_algo = algo;
+			}
+			break;
+		case '?':
+			if (optopt == 'd' || optopt == 's' || optopt == 'o' || optopt == 'a') {
+				fprintf(stderr, "Option -%c must have argument.\n", optopt);
+			} else if (isprint(optopt)) {
+				fprintf(stderr, "Unknown option -%c.\n", optopt);
+			} else {
+				fprintf(stderr, "Unknown option character \\x%x.\n", optopt);
+			}
+			print_usage_and_exit();
+			break;
+		default:
+			print_usage_and_exit();
+			break;
+		}
+	}
+
 }
