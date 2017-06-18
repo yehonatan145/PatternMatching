@@ -68,6 +68,6 @@ size_t parse_pattern_from_line(char* line, size_t n, char** ret) {
 /**
 * Parse the main arguments for the program and updates global data accordingly
 */
-void parse_arguments(int argv, char* argc[]) {
+void parse_arguments(int argv, char* argc[], Conf* conf) {
 	// TODO: implement
 }

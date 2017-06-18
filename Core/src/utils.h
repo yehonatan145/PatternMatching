@@ -11,4 +11,8 @@ inline void* PM_malloc(size_t size) {
 	return malloc(size);
 }
 
+inline void FatalExit(void) {
+	exit(-1);
+}
+
 #endif
