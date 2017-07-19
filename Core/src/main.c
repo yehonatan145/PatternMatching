@@ -11,6 +11,6 @@ int main(int argc, char **argv) {
 	}
 	memset(conf, 0, sizeof(Conf));
 	mps_table_setup();
-	parse_arguments(argc, argv);
+	parse_arguments(argc, argv, conf);
 	init_mps(conf);
 }

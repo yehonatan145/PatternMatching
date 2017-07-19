@@ -10,3 +10,23 @@ void mps_bg_register() {
 }
 
 // TODO implement all the functions here
+
+void* mpbg_create(void) {
+
+}
+
+void mpbg_add_pattern(void* obj, char* pat, size_t len, pattern_id_t id) {
+
+}
+
+void mpbg_compile(void* obj) {
+
+}
+
+pattern_id_t mpbg_read_char(void* obj, char c) {
+	return 0;
+}
+
+void mpbg_free(void* obj) {
+
+}

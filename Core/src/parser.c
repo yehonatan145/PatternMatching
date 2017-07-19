@@ -5,7 +5,7 @@
 #include "mps.h"
 
 // get index to the next index in which there is no space
-#define skip_spaces(arr, index) while(arr[index] == ' ') ++index
+#define skip_spaces(arr, index) while((arr)[(index)] == ' ') ++(index)
 
 /**
 * Get the value of binary char (return -1 if not binary)
@@ -25,11 +25,11 @@ int get_binary_val(char bin) {
 /**
 * Parse a pattern from a dictionary file line
 * 
-* @param line	The line in the dictionary file
-* @param n		The length of the line
-* @param ret	Where to put the final pattern (override old value)
+* @param line   The line in the dictionary file
+* @param n      The length of the line
+* @param ret    Where to put the final pattern (override old value)
 *
-* @return		The length of the final pattern (that was put in ret)
+* @return       The length of the final pattern (that was put in ret)
 */
 size_t parse_pattern_from_line(char* line, size_t n, char** ret) {
 	if (n == 0) {
@@ -77,7 +77,7 @@ void parse_arguments(int argc, char* argv[], Conf* conf) {
 	size_t n_dict = 0, n_stream = 0, n_output = 0, dict_ind = 0, stream_ind = 0;
 	
 	opterr = 0;
-	while ((opt = getopt(argc, argv, "d:s:o:a:")) != -1) {
+	while ((opt = getopt(argc, argv, "d:s:o:")) != -1) {
 		switch (opt) {
 			case 'd': ++n_dict; break;
 			case 's': ++n_streams; break;
@@ -87,16 +87,15 @@ void parse_arguments(int argc, char* argv[], Conf* conf) {
 	}
 	if (n_output > 1) {
 		// more than one output file, error
-		fprintf(stderr, 'Error: have more than one output file');
+		fprintf(stderr, 'Error: have more than one output file\n\n');
 		print_usage_and_exit();
 	}
 	conf->n_dictionary_files = n_dict;
 	conf->n_stream_files = n_stream;
 	conf->dictionary_files = (char**) malloc(n_dict);
 	conf->stream_files = (char**) malloc(n_stream);
-	conf->mps_algo = default_mps_algo;
 	optind = 1;
-	while ((opt = getopt(argc, argv, "d:s:o:a:"))) {
+	while ((opt = getopt(argc, argv, "d:s:o:"))) {
 		switch (opt) {
 		case 'd':
 			conf->dictionary_files[dict_ind] = (char*) malloc(strlen(optarg) + 1);
@@ -112,22 +111,13 @@ void parse_arguments(int argc, char* argv[], Conf* conf) {
 			conf->output_file_name = (char*) malloc(strlen(optarg) + 1);
 			strcpy(conf->output_file_name, optarg);
 			break;
-		case 'a':
-			algo = get_mps_algo(optarg);
-			if (algo == -1) {
-				fprintf(stderr, "Don't have algorithm %s.\n", optarg);
-				print_usage_and_exit();
-			} else {
-				conf->mps_algo = algo;
-			}
-			break;
 		case '?':
-			if (optopt == 'd' || optopt == 's' || optopt == 'o' || optopt == 'a') {
-				fprintf(stderr, "Option -%c must have argument.\n", optopt);
+			if (optopt == 'd' || optopt == 's' || optopt == 'o') {
+				fprintf(stderr, "Option -%c must have argument.\n\n", optopt);
 			} else if (isprint(optopt)) {
-				fprintf(stderr, "Unknown option -%c.\n", optopt);
+				fprintf(stderr, "Unknown option -%c.\n\n", optopt);
 			} else {
-				fprintf(stderr, "Unknown option character \\x%x.\n", optopt);
+				fprintf(stderr, "Unknown option character \\x%x.\n\n", optopt);
 			}
 			print_usage_and_exit();
 			break;

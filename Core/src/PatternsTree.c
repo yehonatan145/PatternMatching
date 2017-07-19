@@ -12,12 +12,12 @@
 /**
 * Check whether one string is (real) suffix of another
 *
-* @param suf		The string that should be a suffix of the other string
-* @param suf_len	The length of that suffix
-* @param str		The string that should contain the other as a suffix
-* @param str_len	The length of that string
+* @param suf        The string that should be a suffix of the other string
+* @param suf_len    The length of that suffix
+* @param str        The string that should contain the other as a suffix
+* @param str_len    The length of that string
 *
-* @return		True if the first string is suffix of the second one, false otherwise
+* @return           1 if the first string is suffix of the second one, 0 otherwise
 */
 int _is_suffix_of(char* suf, size_t suf_len, char* str, size_t str_len) {
 	if (str_len <= suf_len) {
@@ -29,10 +29,10 @@ int _is_suffix_of(char* suf, size_t suf_len, char* str, size_t str_len) {
 /**
 * Add child to the begining of the edge list
 *
-* @param list	Pointer to the edge list
-* @param node	The node of the child
-* @param pat	The prefix of the child from the parent
-* @param n		The length of the pattern
+* @param list   Pointer to the edge list
+* @param node   The node of the child
+* @param pat    The prefix of the child from the parent
+* @param n      The length of the pattern
 */
 void fpt_add_child_to_list(FptEdge** list, FptNode* node, char* pat, size_t n) {
 	if (!list) {
@@ -60,8 +60,8 @@ void fpt_add_child_to_list(FptEdge** list, FptNode* node, char* pat, size_t n) {
 /**
 * Remove edge from the edge list (including freeing the edge)
 *
-* @param list	Pointer to the edge list
-* @param child	The edge to remove from the list
+* @param list     Pointer to the edge list
+* @param child    The edge to remove from the list
 */
 void fpt_remove_child_from_list(FptEdge** list, FptEdge* child) {
 	if (child->next) {
@@ -79,12 +79,12 @@ void fpt_remove_child_from_list(FptEdge** list, FptEdge* child) {
 /**
 * Create new child for a given node
 *
-* @param parent		The node for which we create child
-* @param pat		The pattern from the parent to the child
-* @param n			The length of the pattern
-* @param id			The pattern id of the child
+* @param parent     The node for which we create child
+* @param pat        The pattern from the parent to the child
+* @param n          The length of the pattern
+* @param id         The pattern id of the child
 *
-* @return			Pointer to the new child node created
+* @return           Pointer to the new child node created
 */
 FptNode* fpt_create_new_child(FptNode* parent, char* pat, size_t n, PatternInternalID id) {
 	FptNode* node = (FptNode*)malloc(sizeof(FptNode));
@@ -109,10 +109,10 @@ FptNode* fpt_create_new_child(FptNode* parent, char* pat, size_t n, PatternInter
 *    between the node to those childs (add the pattern as a mid-node between the current node to the suitable  childs)
 * 3. otherwise, just make the pattern a new child
 *
-* @param node	The node to add the pattern to
-* @param pat	The pattern to add to this node
-* @param n		The length of the pattern
-* @param id		The pattern id of the pattern
+* @param node    The node to add the pattern to
+* @param pat     The pattern to add to this node
+* @param n       The length of the pattern
+* @param id      The pattern id of the pattern
 */
 void fpt_add_pattern_to_node(FptNode* node, char* pat, size_t n, PatternInternalID id) {
 	FptEdge *current_edge, *next_edge;
@@ -148,10 +148,10 @@ void fpt_add_pattern_to_node(FptNode* node, char* pat, size_t n, PatternInternal
 /**
 * Add pattern to the full patterns tree
 * 
-* @param tree	The full patterns tree
-* @param pat	The pattern to add to the tree
-* @param n		The length of the pattern
-* @param id		The id of the pattern
+* @param tree   The full patterns tree
+* @param pat    The pattern to add to the tree
+* @param n      The length of the pattern
+* @param id     The id of the pattern
 */
 void fpt_add_pattern(FullPatternsTree* tree, char* pat, size_t n, PatternInternalID id) {
 	fpt_add_pattern_to_node(tree->root, pat, n, id);
@@ -161,7 +161,7 @@ void fpt_add_pattern(FullPatternsTree* tree, char* pat, size_t n, PatternInterna
 /**
 * Create a new empty Full Patterns Tree
 *
-* @return		A new dynamically allocated empty Full Patterns Tree
+* @return       A new dynamically allocated empty Full Patterns Tree
 */
 FullPatternsTree* fpt_new() {
 	FullPatternsTree* ret = (FullPatternsTree*) malloc(sizeof(FullPatternsTree));
@@ -182,11 +182,11 @@ FullPatternsTree* fpt_new() {
 /**
 * Fill an existing Fpt with all the patterns in a dictionary file
 *
-* @param tree			The Full Patterns Tree
-* @param file_index		The index of the dictionary file name in dictionary_files
-* @param filename		The name of the dictionary file
+* @param tree           The Full Patterns Tree
+* @param file_index     The index of the dictionary file name in dictionary_files
+* @param filename       The name of the dictionary file
 *
-* @return			The longest patterns found
+* @return               The longest patterns found
 */
 size_t fpt_fill_with_dict_file(FullPatternsTree* tree, int file_index, char* filename) {
 	FILE* fp;
@@ -200,7 +200,7 @@ size_t fpt_fill_with_dict_file(FullPatternsTree* tree, int file_index, char* fil
 	fp = fopen(filename, "r");
 	if (fp == NULL) {
 		fprintf(stderr, "failed to open dictionary file %s: %s", filename, strerror(errno));
-		return;
+		FatalExit();
 	}
 	while ((read = getline(&line, &len, fp)) != -1) {
 		pat = NULL;
@@ -217,14 +217,15 @@ size_t fpt_fill_with_dict_file(FullPatternsTree* tree, int file_index, char* fil
 	}
 	free(line);
 	fclose(fp);
+	return max_pat_len;
 }
 
 /**
 * Build the full patterns tree from the dictionary files
 *
-* @param conf	The program configuration
+* @param conf   The program configuration
 *
-* @return		A dynamically allocated Full-Patterns-Tree filled with the patterns from the dictionary files
+* @return       A dynamically allocated Full-Patterns-Tree filled with the patterns from the dictionary files
 */
 FullPatternsTree* fpt_build(Conf* conf) {
 	FullPatternsTree* ret = fpt_new();
@@ -235,6 +236,7 @@ FullPatternsTree* fpt_build(Conf* conf) {
 		max_pat_len = fpt_fill_with_dict_file(ret, i, dictionary_files[i]);
 		if (max_pat_len > total_max_pat_len) total_max_pat_len = max_pat_len;
 	}
+	ret->longest_pat_len = total_max_pat_len;
 	conf->max_pat_len = total_max_pat_len;
 	return ret;
 }
@@ -270,8 +272,8 @@ void fpt_free(FullPatternsTree* full_tree) {
 /**
 * Add a new child to a node
 *
-* @param parent		The parent node
-* @param child		The node to add the parent as child
+* @param parent    The parent node
+* @param child     The node to add the parent as child
 */
 void add_child_to_node(PatternsTreeNode* parent, PatternsTreeNode* child) {
 	PatternsTreeEdge* edge = (PatternsTreeEdge*) malloc(sizeof(PatternsTreeEdge));
@@ -292,17 +294,19 @@ void add_child_to_node(PatternsTreeNode* parent, PatternsTreeNode* child) {
 * where we save the current pattern for a node in the end of the buffer, and save the position in the buffer
 * from which the pattern start (so we can easily add/remove another pattern in the start).
 *
-* @param node				The node to convert
-* @param buffer				The buffer to work on
-* @param buffer_len			The length of the buffer
-* @param pat_pos			The position in the buffer where the pattern of the node starts
-* @param mps_obj			The mps object to add the patterns to
-* @param add_pattern_func	The function to add pattern
+* On every new pattern added, we call the callback function add_pattern_func on the given object obj
 *
-* @return			A dynamically allocated patterns tree node constructed from the given node
+* @param node               The node to convert
+* @param buffer             The buffer to work on
+* @param buffer_len         The length of the buffer
+* @param pat_pos            The position in the buffer where the pattern of the node starts
+* @param obj                The object to add the patterns to
+* @param add_pattern_func   The callback function to add pattern to given object
+*
+* @return          A dynamically allocated patterns tree node constructed from the given node
 */
 PatternsTreeNode* convert_fpt_node_to_patterns_tree_node(FptNode* node, char* buffer, size_t buffer_len, size_t pat_pos,
-			void* mps_obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
+			void* obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
 	PatternsTreeNode* ret = (PattersTreeNode*) malloc(sizeof(PattersTreeNode));
 	if (ret == NULL) {
 		perror("failed to allocate memory");
@@ -322,32 +326,31 @@ PatternsTreeNode* convert_fpt_node_to_patterns_tree_node(FptNode* node, char* bu
 		temp->parent = ret;
 		add_child_to_node(ret, temp);
 	}
-	add_pattern_func(mps_obj, buffer + pat_pos, buffer_len - pat_pos, ret);
+	add_pattern_func(obj, buffer + pat_pos, buffer_len - pat_pos, ret);
 	return ret;
 }
 
 /**
 * Convert Full-Patterns-Tree to (regular) Patterns Tree
 *
-* Call function for each finished converted pattern, to add it to the mps object
+* Call callback function for each finished converted pattern, to add it to the given object
 *
-* @param full_tree			The Full Patterns Tree
-* @param max_pat_len		The maximum length of a pattern in the full tree
-* @param mps_obj			The mps object to add the pattern to
-* @param add_pattern_func	The function that adds new pattern to the mps object
+* @param full_tree          The Full Patterns Tree
+* @param obj                The object to add the pattern to
+* @param add_pattern_func   The callback function to add pattern to given object
 *
-* @return			A dynamically allocated Patterns Tree constructed by the given Full Patterns Tree
+* @return       A dynamically allocated Patterns Tree constructed by the given Full Patterns Tree
 */
-PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, size_t max_pat_len
-			void* mps_obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
+PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, void* obj,
+			void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
 	PatternsTree* tree = (PatternsTree*) malloc(sizeof(PatternsTree));
 	if (tree == NULL) {
 		perror("failed to allocate memory");
 		FatalExit();
 	}
-	size_t len = max_pat_len;
-	char* buffer = (char*)malloc(len);
-	tree->root = convert_fpt_node_to_patterns_tree_node(full_tree->root, buffer, len, len, mps_obj, add_pattern_func);
+	size_t llen = full_tree->longest_pat_len;
+	char* buffer = (char*)malloc(llen);
+	tree->root = convert_fpt_node_to_patterns_tree_node(full_tree->root, buffer, llen, llen, obj, add_pattern_func);
 	free(buffer);
 	return tree;
 }
@@ -356,20 +359,25 @@ PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, size_t m
 * Build a patterns tree from the dictionary files (configured in conf)
 *
 * Also call a given function for each finished converted pattern, to add the patterns to the
-* mps object, so we won't lose it (impossible to dicover pattern from node in the regular patterns tree)
+* mps object, so we won't lose it (impossible to discover pattern from node in the partial patterns tree)
 *
-* @param conf				The program configuration
-* @param mps_obj			The mps object to add the patterns to
-* @param add_patterns_func	The function that adds a pattern to the mps object
+* @param conf                 The program configuration
+* @param mps_obj              The mps object to add the patterns to
+* @param add_patterns_func    The function that adds a pattern to the mps object
 *
-* @return	A dynamically allocated patterns tree generated from the patterns in the dictionary files
+* @return     A dynamically allocated patterns tree generated from the patterns in the dictionary files
 */
 PatternsTree* patterns_tree_build(Conf* conf, void* mps_obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
 	FullPatternsTree* full_tree = fpt_build(conf);
-	PatternsTree* tree = convert_fpt_to_patterns_tree(full_tree);
+	PatternsTree* tree = convert_fpt_to_patterns_tree(full_tree, mps_obj, add_pattern_func);
 	fpt_free(full_tree);
 }
 
+/**
+* Free a node in a patterns tree recursilvely
+*
+* @param node       The node to free
+*/
 void patterns_tree_free_node(PatternsTreeNode* node) {
 	PatternsTreeEdge *current_edge, *next_edge;
 
@@ -386,6 +394,11 @@ void patterns_tree_free_node(PatternsTreeNode* node) {
 	free(node);
 }
 
+/**
+* Free entire patterns tree
+*
+* @param tree       The tree to free
+*/
 void patterns_tree_free(PatternsTree* tree) {
 	patterns_tree_free_node(tree->root);
 	free(tree);

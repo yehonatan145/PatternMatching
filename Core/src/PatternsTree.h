@@ -14,8 +14,8 @@
 **************************************************************************************/
 
 #define SET_NULL_PATTERN_INTERNAL_ID(id) copy_pattern_internal_id(&(id), &null_pattern_internal_id)
-#define IS_NULL_PATTERN_INTERNAL_ID(id) id.file_number == null_pattern_internal_id.file_number \
-									 && id.line_number == null_pattern_internal_id.line_number
+#define IS_NULL_PATTERN_INTERNAL_ID(id) ((id).file_number == null_pattern_internal_id.file_number \
+									 && (id).line_number == null_pattern_internal_id.line_number)
 
 
 /**************************************************************************************
@@ -55,6 +55,7 @@ typedef struct s_FptNode {
 */
 typedef struct s_FullPatternsTree {
 	FptNode* root;
+	size_t longest_pat_len;
 } FullPatternsTree;
 
 
@@ -94,9 +95,9 @@ FullPatternsTree* fpt_build(struct _Conf* conf);
 void fpt_free(FullPatternsTree* full_tree);
 
 PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, size_t max_pat_len
-			void* mps_obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t))
+			void* obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t))
 
-PatternsTree* patterns_tree_build(struct _Conf* conf, void* mps_obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t))
+PatternsTree* patterns_tree_build(struct _Conf* conf, void* obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t))
 void patterns_tree_free(PatternsTree* tree);
 
 /**

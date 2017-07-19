@@ -3,13 +3,13 @@
 /**
 * Calculate the fingerprint of a sequence.
 *
-* @param seq	The char sequence
-* @param len	The length of the char sequence
+* @param seq    The char sequence
+* @param len    The length of the char sequence
 * @param rn     Place to put the filed-value of r^n
 * @param r      The value of r for this sequence
 * @param p      The size of the field
 *
-* @return		The fingerprint of the sequence
+* @return       The fingerprint of the sequence
 */
 fingerprint_t calc_fp(char* seq, size_t len, FieldVal* rn, FieldVal* r, fingerprint_t p) {
     fingerprint_t ret = 0, current_rn = 1, current_inv_rn = 1;
@@ -29,15 +29,15 @@ fingerprint_t calc_fp(char* seq, size_t len, FieldVal* rn, FieldVal* r, fingerpr
 /**
 * Calculate the fingerprint of a sequence when already have fingerprint of prefix (and r^length of prefix).
 *
-* @param seq		    The char sequence
-* @param len		    The sequence length
-* @param prefix_fp	The fingerprint of the prefix we have
-* @param prefix_len	The length of the prefix we have
-* @param rn           r^prefix_len, changed to be r^len during run (must not be NULL)
-* @param r            The value of r for this sequence (rn must have been calculated with the same r)
-* @param p            The size of the field
+* @param seq            The char sequence
+* @param len            The sequence length
+* @param prefix_fp      The fingerprint of the prefix we have
+* @param prefix_len     The length of the prefix we have
+* @param rn             r^prefix_len, changed to be r^len during run (must not be NULL)
+* @param r              The value of r for this sequence (rn must have been calculated with the same r)
+* @param p              The size of the field
 *
-* @return		The fingerprint of the sequence
+* @return               The fingerprint of the sequence
 */
 fingerprint_t calc_fp_with_prefix(char* seq, size_t len, fingerprint_t prefix_fp, size_t prefix_len,
         FieldVal* rn, FieldVal* r, fingerprint_t p) {

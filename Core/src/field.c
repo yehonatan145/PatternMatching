@@ -4,10 +4,10 @@
 * Calculate the inverse of a in field with size p
 * p should be prime (or at least gcd(a,p)=1).
 *
-* @param a	The value to find inverse to
-* @param p	The size of the field
+* @param a     The value to find inverse to
+* @param p     The size of the field
 *
-* @return	The inverse of {@param a}
+* @return      The inverse of {@param a}
 */
 field_t calculate_inverse(field_t a, field_t p) {
 	/*

@@ -16,6 +16,11 @@ typedef struct {
 	void (*free)(void*);
 } MpsElem;
 
+typedef struct {
+	void* obj;
+	int algo;
+} MpsInstance;
+
 MpsElem mps_table[MPS_SIZE];
 int default_mps_algo = MPS_BG;
 

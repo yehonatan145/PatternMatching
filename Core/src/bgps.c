@@ -17,46 +17,46 @@
 * 
 * For the first stage, we use Galil's Real-Time version of the KMP algorithm, in the following way:
 *
-* 	1.	We find the period of stage (ceil(log log n) + 1), and computes where it ends (the last position
-*		that still have the same period).
+*   1.  We find the period of stage (ceil(log log n) + 1), and computes where it ends (the last position
+*       that still have the same period).
 *
-*	2.	We then find the last stage that contained in this continuation.
-*		We know this stage (from now "first stage"), have period of length > log n.
+*   2.  We then find the last stage that contained in this continuation.
+*       We know this stage (from now "first stage"), have period of length > log n.
 *
-*	3.	We divide the first stage to number of periods and remaining. (first stage = m * period + remaining)
+*   3.  We divide the first stage to number of periods and remaining. (first stage = m * period + remaining)
 *
-*	4.	Then, we make two different instances of Galil's Real-Time version of KMP, one for the period
-*		and one for the remaining. We give both of them every character arrives, and count the number
-*		of continued instances of the period in the stream (i.e. number of times we saw the period, when each
-*		instance started right after the earlier ended).
+*   4.  Then, we make two different instances of Galil's Real-Time version of KMP, one for the period
+*       and one for the remaining. We give both of them every character arrives, and count the number
+*       of continued instances of the period in the stream (i.e. number of times we saw the period, when each
+*       instance started right after the earlier ended).
 *
-*	5.	If we found out that the number of periods matches are equal to the needed size,
-*		and that the remaining is also a match, we say that that was a match in the first stage.
+*   5.  If we found out that the number of periods matches are equal to the needed size,
+*       and that the remaining is also a match, we say that that was a match in the first stage.
 *
 *
 * For every other stage:
-*	We go through all stages in a round-robin fashion (one stage per character, in decreasing order,
-*	while saving cumulative fingerprints in a buffer). And in each stage k:
+*   We go through all stages in a round-robin fashion (one stage per character, in decreasing order,
+*   while saving cumulative fingerprints in a buffer). And in each stage k:
 *
-*	-	We check if we already saw the character that ended the (k+1)-block of the first VO in stage k.
+*   -   We check if we already saw the character that ended the (k+1)-block of the first VO in stage k.
 *
-*	-	If we did, we check if the fingerprint of the (k+1)-block match the expected fingerprint of stage k + 1.
-*		(and anyway removing this VO from stage k, since we can determine if it went to next stage or fell)
-* 		For that, we precompute the fingerprints of all the stages.
+*   -   If we did, we check if the fingerprint of the (k+1)-block match the expected fingerprint of stage k + 1.
+*       (and anyway removing this VO from stage k, since we can determine if it went to next stage or fell)
+*       For that, we precompute the fingerprints of all the stages.
 *
-*	-	Because of the way we chose the first stage, we know that between every two VOs in the same stage,
-*		there is distance difference of at least log n characters, so it is OK to check only the first one.
+*   -   Because of the way we chose the first stage, we know that between every two VOs in the same stage,
+*       there is distance difference of at least log n characters, so it is OK to check only the first one.
 *
-*	-	For the last stage (and 1-before-last stage if the length difference between them is smaller then log n),
-*		we check on every character if they match, so we won't remember too late we had a match.
-*		(since other stages have a delay in the matches since we go through the stages in round-robin).
+*   -   For the last stage (and 1-before-last stage if the length difference between them is smaller then log n),
+*       we check on every character if they match, so we won't remember too late we had a match.
+*       (since other stages have a delay in the matches since we go through the stages in round-robin).
 *
 * IMPORTANT: The stages round-robin MUST be in decreading order, because otherwise, the next can happen:
-*	Lets say x is the first VO in stage i, and y is the second VO in the same stage.
-*	Lets also say that z is a VO currently moving from stage i-1 to stage i.
-*	It is possible that x should not be a VO right now (but it still is, because we didn't got to it in the round-robin),
-*	and that z is not linear progression with x and y (even though x,y and z are matches).
-*	So if we go to z before x, we will think we have a fingerprint collision, even though we don't.
+*   Lets say x is the first VO in stage i, and y is the second VO in the same stage.
+*   Lets also say that z is a VO currently moving from stage i-1 to stage i.
+*   It is possible that x should not be a VO right now (but it still is, because we didn't got to it in the round-robin),
+*   and that z is not linear progression with x and y (even though x,y and z are matches).
+*   So if we go to z before x, we will think we have a fingerprint collision, even though we don't.
 */
 #include "bgps.h"
 #include <stdio.h>
@@ -197,7 +197,7 @@ void _bgps_init_fps(BGStruct* bg, char* pattern) {
 * @param pattern  The pattern to search
 * @param n        The pattern length
 *
-* @return		Dynamic allocated BGStruct to use on stream
+* @return         Dynamically allocated BGStruct to use on stream
 */
 BGStruct* bg_new(char* pattern, size_t n, field_t p) {
     BGStruct* bg = (BGStruct*) malloc (sizeof(BGStruct));
@@ -248,8 +248,8 @@ BGStruct* bg_new(char* pattern, size_t n, field_t p) {
 * @param p        The size of the field
 *
 * @return       0 - failed
-*				1 - succeed
-*				2 - the VOs was empty (after the call, number of VOs is 1)
+*               1 - succeed
+*               2 - the VOs was empty (after the call, number of VOs is 1)
 */
 int _bgps_add_vo(VOLinearProgression* vos, pos_t pos, fingerprint_t fp, FieldVal* rn, field_t p) {
 	//printf("add vo pos = %llu\n", pos);
@@ -277,11 +277,11 @@ int _bgps_add_vo(VOLinearProgression* vos, pos_t pos, fingerprint_t fp, FieldVal
 /**
 * Remove the first VO from the VOs linear progression.
 *
-* @param vos	The VOs linear progression
-* @param p		The size of the field
+* @param vos    The VOs linear progression
+* @param p      The size of the field
 *
-* @return		0 - there are still VOs left
-*				1 - the VOs is now empty
+* @return       0 - there are still VOs left
+*               1 - the VOs is now empty
 */
 int _bgps_remove_first_vo(VOLinearProgression* vos, field_t p) {
 	//printf("remove vo pos = %llu, n = %d\n", vos->first.pos, vos->n);
@@ -305,18 +305,18 @@ int _bgps_remove_first_vo(VOLinearProgression* vos, field_t p) {
 * If there been at least 2^(stage_num+1) characters between the first vo and the current character,
 * it means that we need to remove this vo from the stage, and check whether it is match the next stage.
 * The VO match the next stage if:
-*	- The fingerprint of the VO block at stage stage_num+1 ( fp( stream[VO.pos .. VO.pos+2^(stage_num+1)] ) )
-*	  	match the fingerprint of stage stage_num+1 in the pattern.
-*	- The VO is linear progression with the other VOs in stage stage_num+1.
+*   - The fingerprint of the VO block at stage stage_num+1 ( fp( stream[VO.pos .. VO.pos+2^(stage_num+1)] ) )
+*     match the fingerprint of stage stage_num+1 in the pattern.
+*   - The VO is linear progression with the other VOs in stage stage_num+1.
 *
 * Change flags BG_HAVE_LAST_STAGE_FLAG, BG_HAVE_BEFORE_LAST_STAGE_FLAG if needed.
 *
-* @param bg			The bg struct
-* @param stage_num	The stage number as indexed in vos & fps (real stage is first_stage + parameter)
+* @param bg          The bg struct
+* @param stage_num   The stage number as indexed in vos & fps (real stage is first_stage + parameter)
 *
-* @return		If we found that the first vo should be upgraded to the next stage,
-*			    but it don't fit to the next stage's linear progression, return 0.
-*			    Otherwise return 1.
+* @return       If we found that the first vo should be upgraded to the next stage,
+*               but it don't fit to the next stage's linear progression, return 0.
+*               Otherwise return 1.
 */
 int _bgps_vo_stage_upgrade(BGStruct* bg, size_t stage_num) {
 	//printf("upgrade first vo of stage %d\n", stage_num);
@@ -454,10 +454,10 @@ int _bgps_check_first_stage(BGStruct* bg, char c) {
 /**
 * Read char and return whether we have a match.
 *
-* @param bg	The BGStruct of the pattern we want to search
-* @param c	The new character from the stream
+* @param bg     The BGStruct of the pattern we want to search
+* @param c      The new character from the stream
 *
-* @return		1 if found pattern, 0 if not
+* @return       1 if found pattern, 0 if not
 */
 int bg_read_char(BGStruct* bg, char c) {
 	if (bg->flags & BG_SHORT_PATTERN_FLAG) {
@@ -499,7 +499,7 @@ int bg_read_char(BGStruct* bg, char c) {
 /**
 * Free memory of BGStruct
 *
-* @param bg	the BGStruct to free
+* @param bg     The BGStruct to free
 */
 void bg_free(BGStruct* bg) {
 	if (!bg) return;
@@ -515,6 +515,7 @@ void bg_free(BGStruct* bg) {
 ================================= F O R     T E S T I N G ================================
 */
 
+/*
 void print_VOS(VOLinearProgression* vos, int stage) {
 	printf("VOs in stage %d: from %llu to %llu (%d steps of %llu)\n", stage, vos->first.pos,
 		vos->first.pos + (vos->n - 1) * vos->step.pos, vos->n, vos->step.pos);
@@ -548,8 +549,8 @@ void print_BG_after_char(BGStruct* bg) {
 		}
 	}
 }
+*/
 
-//============================== F O R      T E S T I N G ======================
 /*
 int main() {
 	int i;

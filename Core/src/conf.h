@@ -12,8 +12,8 @@ typedef struct _Conf {
 	char** stream_files;
 	size_t n_stream_files;
 	size_t max_pat_len;
-	int mps_algo;
-	void* mps_obj;
+	MpsInstance* mps_instances;
+	size_t n_mps_instances
 	PatternsTree* patterns_tree;
 	char* output_file_name;
 } Conf;

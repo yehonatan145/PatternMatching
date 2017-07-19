@@ -7,17 +7,7 @@
 #include "bgps.h"
 #include "mps.h"
 
-typedef struct BGNode_s {
-	int n;
-	char* pattern;
-	struct BGNode_s* next;
-} BGNode;
-
-typedef struct {
-	int num_of_patterns;
-	BGStruct* bgs; // the array of breslauer-galil stucts for all the patterns
-	BGNode* first_pat; // used only for the pattern gathering, not used after the struct was compiled.
-} MPBGStruct;
+// TODO complete
 
 void* mpbg_create(void);
 void mpbg_add_pattern(void* obj, char* pat, size_t len, pattern_id_t id);

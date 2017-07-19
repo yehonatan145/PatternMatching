@@ -23,8 +23,8 @@
 * @param pattern  The pattern
 * @param n        The length of the pattern
 *
-* @return		Dynamic allocated array of size (n + 1), which represent the failure function.
-*				i.e. the i-th position is the last position we know we have match in.
+* @return    Dynamic allocated array of size (n + 1), which represent the failure function.
+*            i.e. the i-th position is the last position we know we have match in.
 */
 size_t* kmp_create_failure_table(char* pattern, size_t n) {
 	size_t *failure_table = (size_t*) malloc ((n + 1) * sizeof(int));
@@ -48,7 +48,7 @@ size_t* kmp_create_failure_table(char* pattern, size_t n) {
 * @param pattern  The pattern for the struct
 * @param n        The pattern length
 *
-* @return		Dynamicaly allocated KMPRealTime for searching the given pattern
+* @return         Dynamicaly allocated KMPRealTime for searching the given pattern
 */
 KMPRealTime* kmp_new(char* pattern, size_t n) {
 	KMPRealTime* kmp = (KMPRealTime *) malloc (sizeof(KMPRealTime));
@@ -82,11 +82,11 @@ size_t kmp_get_period(char* pattern, size_t n) {
 * If succeed (return true), it change the kmp to the state of right AFTER the char was called
 * (i.e. ready for the char that comes after {@param c})
 *
-* @param kmp	The kmp struct
-* @param c		The char that was mismatched that started the failure function loop
+* @param kmp    The kmp struct
+* @param c      The char that was mismatched that started the failure function loop
 *
-* @return		True if the failure function finished (we got the first position at which this character matches)
-*				False if not
+* @return       True if the failure function finished (we got the first position at which this character matches)
+*               False if not
 */
 int _kmp_move_failure_function(KMPRealTime* kmp, char c) {
 	kmp->offset = kmp->failure_table[kmp->offset];
@@ -103,8 +103,8 @@ int _kmp_move_failure_function(KMPRealTime* kmp, char c) {
 /**
 * Add character to the buffer at the end.
 *
-* @param kmp	The kmp struct
-* @param c	The character to add to the buffer
+* @param kmp    The kmp struct
+* @param c      The character to add to the buffer
 */
 void _kmp_add_char_to_buffer(KMPRealTime* kmp, char c) {
 	if (kmp->flags & KMP_HAVE_BUFFER_FLAG) {
@@ -120,8 +120,8 @@ void _kmp_add_char_to_buffer(KMPRealTime* kmp, char c) {
 /**
 * Add character to the buffer at the start.
 *
-* @param kmp	The kmp struct
-* @param c	The character to add tp the buffer
+* @param kmp    The kmp struct
+* @param c      The character to add tp the buffer
 */
 void _kmp_push_char_to_buffer(KMPRealTime* kmp, char c) {
 	if (kmp->flags & KMP_HAVE_BUFFER_FLAG) {
@@ -138,9 +138,9 @@ void _kmp_push_char_to_buffer(KMPRealTime* kmp, char c) {
 /**
 * Pop char from buffer.
 *
-* @param kmp The kmp struct
+* @param kmp    The kmp struct
 *
-* @return The first char in the buffer
+* @return       The first char in the buffer
 */
 char _kmp_pop_buffer(KMPRealTime* kmp) {
 	char c = kmp->buffer[kmp->buf_start];
@@ -158,10 +158,10 @@ char _kmp_pop_buffer(KMPRealTime* kmp) {
 *  -Put the char in the start of the buffer for later use (if the buffer is empty)
 *  -And return 0.
 *
-* @param kmp	The kmp struct
-* @param c	The char
+* @param kmp    The kmp struct
+* @param c      The char
 *
-* @return		Whether there is a match
+* @return       Whether there is a match
 */
 int _kmp_read_char(KMPRealTime* kmp, char c) {
 	if (kmp->pattern[kmp->offset] == c) {
@@ -198,10 +198,10 @@ int _kmp_read_char(KMPRealTime* kmp, char c) {
 /**
 * Read char from stream and return whether we have a match.
 *
-* @param kmp	The KMPRealTime that used for the pattern we search
-* @param c		The new character from the stream
+* @param kmp    The KMPRealTime that used for the pattern we search
+* @param c      The new character from the stream
 *
-* @return		1 if there is match, 0 if not
+* @return       1 if there is match, 0 if not
 */
 int kmp_read_char(KMPRealTime* kmp, char c) {
 	int i;
@@ -237,7 +237,7 @@ int kmp_read_char(KMPRealTime* kmp, char c) {
 /**
 * Free the memory for KMPRealTime
 *
-* @param kmp	The KMPRealTime to free
+* @param kmp     The KMPRealTime to free
 */
 void kmp_free(KMPRealTime* kmp) {
 	free(kmp->failure_table);
@@ -251,6 +251,7 @@ void kmp_free(KMPRealTime* kmp) {
 
 // ===================     FOR TESTING     ================================
 
+/*
 int main() {
 	unsigned int i;
 //             0         1
@@ -274,3 +275,4 @@ int main() {
 	char a;
 	scanf("%d", &a);
 }
+*/
