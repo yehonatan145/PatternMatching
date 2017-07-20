@@ -1,6 +1,8 @@
 #ifndef MPS_H
 #define MPS_H
 
+#include "PatternsTree.h"
+
 // Multi-Pattern Search Algorithms
 enum {
 	MPS_BG = 0, // Multi-Pattern Brausler-Galil
@@ -21,12 +23,9 @@ typedef struct {
 	int algo;
 } MpsInstance;
 
-MpsElem mps_table[MPS_SIZE];
-int default_mps_algo = MPS_BG;
+extern MpsElem mps_table[MPS_SIZE]; // definition in .c file
 
 void mps_table_setup();
 void init_mps(struct _Conf* conf);
-// get the enum value of the algorithm by its name
-int get_mps_algo(char* name);
 
 #endif /* MPS_H */

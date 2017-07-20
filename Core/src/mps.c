@@ -1,6 +1,11 @@
 #include "mps.h"
+#include "PatternsTree.h"
 #include "conf.h"
 #include "mpbg.h"
+
+
+MpsElem mps_table[MPS_SIZE];
+
 
 /**
 * Setup the table for the mps.
@@ -36,6 +41,7 @@ void init_mps_instances(Conf* conf) {
 * @param id         The id of the pattern
 */
 void add_pattern_to_all_instances(void* pconf, char* pat, size_t len, pattern_id_t id) {
+	// printf("adding pattern: "); print_str(pat, len); printf("\n");
 	Conf* conf = (Conf*)pconf;
 	size_t i, n = conf->n_mps_instances;
 	int algo;
@@ -53,13 +59,13 @@ void add_pattern_to_all_instances(void* pconf, char* pat, size_t len, pattern_id
 * @param conf     The configuration
 */
 void compile_all_instances(Conf* conf) {
-	size_t i, n = conf->n_mpst_instances;
+	size_t i, n = conf->n_mps_instances;
 	int algo;
 	void* obj;
 	for (i = 0; i < n; ++i) {
 		algo = conf->mps_instances[i].algo;
 		obj = conf->mps_instances[i].obj;
-		mpst_table[algo].compile(obj);
+		mps_table[algo].compile(obj);
 	}
 }
 
@@ -72,21 +78,4 @@ void init_mps(Conf* conf) {
 	init_mps_instances(conf);
 	conf->patterns_tree = patterns_tree_build(conf, (void*)conf, add_pattern_to_all_instances);
 	compile_all_instances(conf);
-}
-
-/**
-* Get the enum value of the algorithm by its name
-*
-* @param name     The name of the algorithm
-*
-* @return         The enum value that match the name, or -1 if none match
-*/
-int get_mps_algo(char* name) {
-	int i;
-	for (i = 0; i < MPS_SIZE; ++i) {
-		if (!strcmp(name, mps_table[i].name)) {
-			return i;
-		}
-	}
-	return -1;
 }

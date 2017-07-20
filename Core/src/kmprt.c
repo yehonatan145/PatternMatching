@@ -55,7 +55,7 @@ KMPRealTime* kmp_new(char* pattern, size_t n) {
 	memset(kmp, 0, sizeof(KMPRealTime));
 	kmp->n = n;
 	kmp->pattern = (char*) malloc (n * sizeof(char));
-	strncpy(kmp->pattern, pattern, n);
+	memcpy(kmp->pattern, pattern, n);
 	kmp->buffer = (char*) malloc (n * sizeof(char));
 	kmp->failure_table = kmp_create_failure_table(pattern, n);
 	return kmp;

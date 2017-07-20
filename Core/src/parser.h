@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+struct _Conf;
+
 /**
 * Parse a pattern from a dictionary file line
 */

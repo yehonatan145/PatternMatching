@@ -1,26 +1,32 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <sdtio.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
-int total_mem_used = 0;
 char* program_name;
 
-inline void* PM_malloc(size_t size) {
-	total_mem_used += size;
-	return malloc(size);
-}
-
-inline void FatalExit(void) {
+static inline void FatalExit(void) {
 	exit(EXIT_FAILURE);
-}
+};
 
 void usage();
 
-void print_usage_and_exit() {
+static inline void print_usage_and_exit() {
 	usage();
 	exit(EXIT_FAILURE);
+};
+
+static inline void print_str(char* str, size_t len) {
+	size_t i;
+	for (i = 0; i < len; ++i) {
+		if (isprint(str[i])) {
+			printf("%c", str[i]);
+		} else {
+			printf("\\x%x", str[i] & 0xff);
+		}
+	}
 }
 
 #endif

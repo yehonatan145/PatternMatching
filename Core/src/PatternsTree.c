@@ -1,13 +1,18 @@
 #include "PatternsTree.h"
 #include "conf.h"
 
+// ============ FOR TESTING ===================
+void print_fpt(FullPatternsTree* full_tree);
+void print_patterns_tree(PatternsTree* tree);
+// ============ FOR TESTING ===================
+
 /**
 * We build the patterns tree in two stages:
 * 1. Build a full pattern tree (where every node have a list of its childs, with the suitable suffix)
 * 2. Convert the full tree to regular tree (where every node have only his parent)
 */
 
-
+PatternInternalID null_pattern_internal_id = {-1,-1};
 
 /**
 * Check whether one string is (real) suffix of another
@@ -21,9 +26,9 @@
 */
 int _is_suffix_of(char* suf, size_t suf_len, char* str, size_t str_len) {
 	if (str_len <= suf_len) {
-		reutrn 0;
+		return 0;
 	}
-	return !strncmp(str + (str_len - suf_len), suf, suf_len);
+	return !memcmp(str + (str_len - suf_len), suf, suf_len);
 }
 
 /**
@@ -50,7 +55,7 @@ void fpt_add_child_to_list(FptEdge** list, FptNode* node, char* pat, size_t n) {
 		perror("failed to allocate memory");
 		FatalExit();
 	}
-	strncpy(fisrt->text, pat, n);
+	memcpy(first->text, pat, n);
 	first->prev = NULL;
 	first->next = *list;
 	if (*list) (*list)->prev = first;
@@ -93,7 +98,7 @@ FptNode* fpt_create_new_child(FptNode* parent, char* pat, size_t n, PatternInter
 		FatalExit();
 	}
 	node->parent = parent;
-	copy_pattern_internal_id(&node->id, &id);
+	copy_pattern_internal_id(&node->pattern_id, &id);
 	node->edge_list = NULL;
 	fpt_add_child_to_list(&parent->edge_list, node, pat, n);
 	return node;
@@ -121,7 +126,7 @@ void fpt_add_pattern_to_node(FptNode* node, char* pat, size_t n, PatternInternal
 	current_edge = node->edge_list;
 	while (current_edge) {
 		next_edge = current_edge->next;
-		if (current_edge->len == n && !strncpy(current_edge->text, pat, n)) {
+		if (current_edge->len == n && !memcmp(current_edge->text, pat, n)) {
 			// pattern is already in the tree
 			return;
 		}
@@ -174,8 +179,8 @@ FullPatternsTree* fpt_new() {
 		perror("failed to allocate memory");
 		FatalExit();
 	}
-	memset(&ret->root, 0, sizeof(FptNode));
-	SET_NULL_PATTERN_INTERNAL_ID(ret->root->id);
+	memset(ret->root, 0, sizeof(FptNode));
+	SET_NULL_PATTERN_INTERNAL_ID(ret->root->pattern_id);
 	return ret;
 }
 
@@ -307,7 +312,7 @@ void add_child_to_node(PatternsTreeNode* parent, PatternsTreeNode* child) {
 */
 PatternsTreeNode* convert_fpt_node_to_patterns_tree_node(FptNode* node, char* buffer, size_t buffer_len, size_t pat_pos,
 			void* obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
-	PatternsTreeNode* ret = (PattersTreeNode*) malloc(sizeof(PattersTreeNode));
+	PatternsTreeNode* ret = (PatternsTreeNode*) malloc(sizeof(PatternsTreeNode));
 	if (ret == NULL) {
 		perror("failed to allocate memory");
 		FatalExit();
@@ -315,18 +320,20 @@ PatternsTreeNode* convert_fpt_node_to_patterns_tree_node(FptNode* node, char* bu
 	PatternsTreeNode* temp;
 	FptEdge* current_edge;
 
-	memset(ret, 0, sizeof(PattersTreeNode));
-	copy_pattern_internal_id(&ret->id, &node->id);
+	memset(ret, 0, sizeof(PatternsTreeNode));
+	copy_pattern_internal_id(&ret->pattern_id, &node->pattern_id);
 	for (current_edge = node->edge_list; current_edge; current_edge = current_edge->next) {
-		size_t len = current_edge->node->len;
-		char* text = current_edge->node->text;
-		strncpy(buffer + pat_pos - len, text, len);
+		size_t len = current_edge->len;
+		char* text = current_edge->text;
+		memcpy(buffer + pat_pos - len, text, len);
 		temp = convert_fpt_node_to_patterns_tree_node(current_edge->node, buffer, buffer_len, pat_pos - len,
-				mps_object, add_pattern_func);
+				obj, add_pattern_func);
 		temp->parent = ret;
 		add_child_to_node(ret, temp);
 	}
-	add_pattern_func(obj, buffer + pat_pos, buffer_len - pat_pos, ret);
+	if (pat_pos != buffer_len) { // if not empty pattern (root)
+		add_pattern_func(obj, buffer + pat_pos, buffer_len - pat_pos, ret);
+	}
 	return ret;
 }
 
@@ -402,4 +409,35 @@ void patterns_tree_free_node(PatternsTreeNode* node) {
 void patterns_tree_free(PatternsTree* tree) {
 	patterns_tree_free_node(tree->root);
 	free(tree);
+}
+
+// ==============================================================
+// ==================== FOT TESTING =============================
+// ==============================================================
+void print_fpt_node(FptNode* node, int indent) {
+	FptEdge* cur;
+	int i;
+	for (cur = node->edge_list; cur; cur = cur->next) {
+		for (i = 0; i < indent; ++i) printf(" ");
+		printf(":"); print_str(cur->text, cur->len); printf("\n");
+		print_fpt_node(cur->node, indent + 2);
+	}
+}
+
+void print_fpt(FullPatternsTree* full_tree) {
+	print_fpt_node(full_tree->root, 0);
+}
+
+void print_patterns_tree_node(PatternsTreeNode* node, int indent) {
+	PatternsTreeEdge* edge;
+	int i;
+	for (i = 0; i < indent; ++i) printf(" ");
+	printf(":file = %d:line = %d:\n", node->pattern_id.file_number, node->pattern_id.line_number);
+	for (edge = node->edge_list; edge; edge = edge->next) {
+		print_patterns_tree_node(edge->node, indent + 2);
+	}
+}
+
+void print_patterns_tree(PatternsTree* tree) {
+	print_patterns_tree_node(tree->root, 0);
 }

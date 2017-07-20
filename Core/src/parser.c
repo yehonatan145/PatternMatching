@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <ctype.h>
 #include "parser.h"
 #include "conf.h"
 #include "util.h"
@@ -42,10 +43,10 @@ size_t parse_pattern_from_line(char* line, size_t n, char** ret) {
 			++pos;
 			while (pos < n && line[pos] != '|') {
 				skip_spaces(line, pos);
-				first = get_bin_val(line[pos]);
+				first = get_binary_val(line[pos]);
 				++pos;
 				skip_spaces(line, pos);
-				second = get_bin_val(line[pos]);
+				second = get_binary_val(line[pos]);
 				++pos;
 				if (first == -1 || second == -1) {
 					err = 1;
@@ -64,7 +65,7 @@ size_t parse_pattern_from_line(char* line, size_t n, char** ret) {
 		return 0;
 	}
 	*ret = (char*)malloc(len);
-	strncpy(*ret, pattern, len);
+	memcpy(*ret, pattern, len);
 	free(pattern);
 	return len;
 }
@@ -80,14 +81,14 @@ void parse_arguments(int argc, char* argv[], Conf* conf) {
 	while ((opt = getopt(argc, argv, "d:s:o:")) != -1) {
 		switch (opt) {
 			case 'd': ++n_dict; break;
-			case 's': ++n_streams; break;
+			case 's': ++n_stream; break;
 			case 'o': ++n_output; break;
 			default: break;
 		}
 	}
 	if (n_output > 1) {
 		// more than one output file, error
-		fprintf(stderr, 'Error: have more than one output file\n\n');
+		fprintf(stderr, "Error: have more than one output file\n\n");
 		print_usage_and_exit();
 	}
 	conf->n_dictionary_files = n_dict;
@@ -95,7 +96,7 @@ void parse_arguments(int argc, char* argv[], Conf* conf) {
 	conf->dictionary_files = (char**) malloc(n_dict);
 	conf->stream_files = (char**) malloc(n_stream);
 	optind = 1;
-	while ((opt = getopt(argc, argv, "d:s:o:"))) {
+	while ((opt = getopt(argc, argv, "d:s:o:")) != -1) {
 		switch (opt) {
 		case 'd':
 			conf->dictionary_files[dict_ind] = (char*) malloc(strlen(optarg) + 1);
@@ -117,7 +118,7 @@ void parse_arguments(int argc, char* argv[], Conf* conf) {
 			} else if (isprint(optopt)) {
 				fprintf(stderr, "Unknown option -%c.\n\n", optopt);
 			} else {
-				fprintf(stderr, "Unknown option character \\x%x.\n\n", optopt);
+				fprintf(stderr, "Unknown option character \\x%x.\n\n", optopt & 0xff);
 			}
 			print_usage_and_exit();
 			break;

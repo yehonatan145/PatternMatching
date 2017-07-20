@@ -4,9 +4,9 @@
 
 #define _GNU_SOURCE
 #include "parser.h"
-#include "utils.h"
+#include "util.h"
 #include <stdio.h>
-#include <stdlin.h>
+#include <stdlib.h>
 #include <errno.h>
 
 /**************************************************************************************
@@ -21,6 +21,8 @@
 /**************************************************************************************
 *         D A T A     S T R U C T U R E S
 **************************************************************************************/
+
+struct _Conf;
 
 typedef struct {
 	int file_number;
@@ -46,7 +48,7 @@ typedef struct s_FptEdge {
 */
 typedef struct s_FptNode {
 	struct s_FptNode* parent;
-	PatternInternalID id;
+	PatternInternalID pattern_id;
 	FptEdge* edge_list;
 } FptNode;
 
@@ -81,10 +83,10 @@ typedef struct s_PatternsTreeNode {
 } PatternsTreeNode;
 
 typedef struct {
-	PatternTreeNode* root;
+	PatternsTreeNode* root;
 } PatternsTree;
 
-typedef pattern_id_t PatternTreeNode*;
+typedef PatternsTreeNode* pattern_id_t;
 
 
 /**************************************************************************************
@@ -94,21 +96,21 @@ typedef pattern_id_t PatternTreeNode*;
 FullPatternsTree* fpt_build(struct _Conf* conf);
 void fpt_free(FullPatternsTree* full_tree);
 
-PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, size_t max_pat_len
-			void* obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t))
+PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, void* obj,
+				void (*add_pattern_func)(void*, char*, size_t, pattern_id_t));
 
-PatternsTree* patterns_tree_build(struct _Conf* conf, void* obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t))
+PatternsTree* patterns_tree_build(struct _Conf* conf, void* obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t));
 void patterns_tree_free(PatternsTree* tree);
 
 /**
 * Copy the internal id content
 */
-inline void copy_pattern_internal_id(PatternInternalID* dest, PatternInternalID* src) {
+static inline void copy_pattern_internal_id(PatternInternalID* dest, PatternInternalID* src) {
 	dest->file_number = src->file_number;
 	dest->line_number = src->line_number;
-}
+};
 
-PatternInternalID null_pattern_internal_id = {-1,-1};
+extern PatternInternalID null_pattern_internal_id; // defeinition in .c file
 
 
 
