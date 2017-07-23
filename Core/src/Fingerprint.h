@@ -22,8 +22,13 @@ typedef field_t fingerprint_t;
 
 /* functions to calculate fingerprints. also calculate r^len (when got previously r^prefix_len) */
 fingerprint_t calc_fp(char* seq, size_t len, FieldVal* rn, FieldVal* r, fingerprint_t p);
-fingerprint_t calc_fp_with_prefix(char* seq, size_t len, fingerprint_t prefix_fp, size_t prefix_len,
-        FieldVal* rn, FieldVal* r, fingerprint_t p);
+fingerprint_t calc_fp_with_prefix(char           *seq,
+                                  size_t          len,
+                                  fingerprint_t   prefix_fp,
+                                  size_t          prefix_len,
+                                  FieldVal       *rn,
+                                  FieldVal       *r,
+                                  fingerprint_t   p);
 
 
 /******************************************************************************************************
@@ -55,17 +60,25 @@ fingerprint_t calc_fp_with_prefix(char* seq, size_t len, fingerprint_t prefix_fp
 * prefix_fp = all_fp - suffix_fp * r_prefix
 * suffix_fp = (all_fp - prefix_fp) * r_prefix^-1
 */
-static inline fingerprint_t calc_fp_suffix(fingerprint_t all_fp, fingerprint_t prefix_fp, FieldVal* r_prefix, field_t p) {
-    return ((all_fp > prefix_fp ? all_fp - prefix_fp : p - prefix_fp + all_fp) * r_prefix->inv) % p;
+static inline fingerprint_t calc_fp_suffix(fingerprint_t  all_fp,
+                                           fingerprint_t  prefix_fp,
+                                           FieldVal      *r_prefix,
+                                           field_t        p) {
+	return ((all_fp > prefix_fp ? all_fp - prefix_fp : p - prefix_fp + all_fp) * r_prefix->inv) % p;
 }
 
-static inline fingerprint_t calc_fp_prefix(fingerprint_t all_fp, fingerprint_t suffix_fp, FieldVal* r_prefix, field_t p) {
+static inline fingerprint_t calc_fp_prefix(fingerprint_t  all_fp,
+                                           fingerprint_t  suffix_fp,
+                                           FieldVal      *r_prefix,
+                                           field_t        p) {
 	fingerprint_t suffix_part = (suffix_fp * r_prefix->val) % p;
 	return (all_fp > suffix_part ? all_fp - suffix_part : p - suffix_part + all_fp) % p;
 }
 
-static inline fingerprint_t calc_fp_from_prefix_suffix(
-	    fingerprint_t prefix_fp, fingerprint_t suffix_fp, FieldVal* r_prefix, field_t p) {
+static inline fingerprint_t calc_fp_from_prefix_suffix(fingerprint_t  prefix_fp,
+                                                       fingerprint_t  suffix_fp,
+                                                       FieldVal      *r_prefix,
+                                                       field_t        p) {
 	// we do % p twice, to not get overflow:
 	// All we are promised, is that p < sqrt(sizeof(field_t)), so suffix * r_prefix is in the range
 	// But, suffix * r_prefix + prefix might give overflow

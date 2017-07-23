@@ -86,7 +86,12 @@ typedef struct {
 	PatternsTreeNode* root;
 } PatternsTree;
 
+/**
+* pattern_id_t should be primitive type (eg. int or pointer) so it can be copied by '='
+*/
 typedef PatternsTreeNode* pattern_id_t;
+
+static pattern_id_t null_pattern_id = NULL;
 
 
 /**************************************************************************************

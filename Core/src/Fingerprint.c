@@ -39,8 +39,13 @@ fingerprint_t calc_fp(char* seq, size_t len, FieldVal* rn, FieldVal* r, fingerpr
 *
 * @return               The fingerprint of the sequence
 */
-fingerprint_t calc_fp_with_prefix(char* seq, size_t len, fingerprint_t prefix_fp, size_t prefix_len,
-        FieldVal* rn, FieldVal* r, fingerprint_t p) {
+fingerprint_t calc_fp_with_prefix(char*            seq,
+                                  size_t           len,
+                                  fingerprint_t    prefix_fp,
+                                  size_t           prefix_len,
+                                  FieldVal        *rn,
+                                  FieldVal        *r,
+                                  fingerprint_t    p) {
     fingerprint_t current_rn = rn->val, current_inv_rn = rn->inv;
     fingerprint_t r_val = r->val, r_inv = r->inv; // So we won't access memory all the time
     size_t i;

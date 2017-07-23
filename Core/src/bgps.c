@@ -110,12 +110,12 @@ int bg_log2(field_t x, int ceil)
 * @return         The last position in which the period of pattern[0..n-1], is continued in pattern[0..all-1]
 */
 size_t _bgps_find_period_continue(char* pattern, size_t all, size_t n, size_t period) {
-    for ( ; n < all; n++) {
-        if (pattern[n] != pattern[n % period]) {
-            return n - 1;
-        }
-    }
-    return n - 1; // if got here, the all patern have the same period (n == all)
+	for ( ; n < all; n++) {
+		if (pattern[n] != pattern[n % period]) {
+			return n - 1;
+		}
+	}
+	return n - 1; // if got here, the all patern have the same period (n == all)
 }
 
 /**
@@ -137,20 +137,20 @@ size_t _bgps_find_period_continue(char* pattern, size_t all, size_t n, size_t pe
 * @param pattern  The pattern of the bg struct
 */
 void _bgps_init_kmp(BGStruct* bg, char* pattern) {
-    int stage_loglogn_period = kmp_get_period(pattern, 1 << bg->loglogn);
-    int last_period_continued = _bgps_find_period_continue(pattern, bg->n, 1 << bg->loglogn, stage_loglogn_period);
-    //printf("stage loglogn period is %d, and the last period continue is %d\n", stage_loglogn_period, last_period_continued);
-    bg->first_stage = bg_log2(last_period_continued, 0);
-    bg->kmp_period = kmp_new(pattern, stage_loglogn_period);
-    bg->n_kmp_period = (1 << bg->first_stage) / stage_loglogn_period;
-    int remaining = (1 << bg->first_stage) % stage_loglogn_period;
-    if (remaining != 0) {
-        bg->kmp_remaining = kmp_new(pattern, remaining);
-    } else {
-        bg->kmp_remaining = NULL;
-    }
-    bg->current_n_kmp_period = 0;
-    bg->last_kmp_period_match_pos = 0;
+	int stage_loglogn_period = kmp_get_period(pattern, 1 << bg->loglogn);
+	int last_period_continued = _bgps_find_period_continue(pattern, bg->n, 1 << bg->loglogn, stage_loglogn_period);
+	//printf("stage loglogn period is %d, and the last period continue is %d\n", stage_loglogn_period, last_period_continued);
+	bg->first_stage = bg_log2(last_period_continued, 0);
+	bg->kmp_period = kmp_new(pattern, stage_loglogn_period);
+	bg->n_kmp_period = (1 << bg->first_stage) / stage_loglogn_period;
+	int remaining = (1 << bg->first_stage) % stage_loglogn_period;
+	if (remaining != 0) {
+		bg->kmp_remaining = kmp_new(pattern, remaining);
+	} else {
+		bg->kmp_remaining = NULL;
+	}
+	bg->current_n_kmp_period = 0;
+	bg->last_kmp_period_match_pos = 0;
 }
 
 /**
@@ -172,23 +172,37 @@ void _bgps_init_kmp(BGStruct* bg, char* pattern) {
 * @param pattern  The pattern of the bg struct
 */
 void _bgps_init_fps(BGStruct* bg, char* pattern) {
-    bg->fps = (fingerprint_t*) malloc ((N_STAGES(bg) + 1) * sizeof(fingerprint_t));    
-    // There is N_STAGES + 1 fingerprints, because the all pattern's fingerprint must be saved, but it is not a stage.
-    FieldVal rn;
-    size_t first_stage = bg->first_stage;
-    bg->fps[0] = calc_fp(pattern, 1 << first_stage, &rn, &bg->r, bg->p);
-    field_div(&bg->first_stage_r, &rn, &bg->r, bg->p); // now, first_stage_rn == r^(2^first_stage - 1)
-    int i = first_stage + 1;
-    for (; i < bg->logn; ++i) {
-        bg->fps[i - first_stage] = 
-            calc_fp_with_prefix(pattern, 1 << i, bg->fps[i - first_stage - 1], 1 << (i - 1), &rn, &bg->r, bg->p);
-    }
-    // Now i is logn, but we prefer to write i because it in cache
-    bg->fps[i - bg->first_stage] =
-        calc_fp_with_prefix(pattern, bg->n, bg->fps[i - bg->first_stage - 1], 1 << (i - 1), &rn, &bg->r, bg->p);
-    if (bg->n - (1 << (i - 1)) < bg->logn) {
-        bg->flags |= BG_NEED_BEFORE_LAST_STAGE_FLAG;
-    }
+	bg->fps = (fingerprint_t*) malloc ((N_STAGES(bg) + 1) * sizeof(fingerprint_t));    
+	// There is N_STAGES + 1 fingerprints, because the all pattern's fingerprint must be saved, but it is not a stage.
+	FieldVal rn;
+	size_t first_stage = bg->first_stage;
+	bg->fps[0] = calc_fp(pattern, 1 << first_stage, &rn, &bg->r, bg->p);
+	field_div(&bg->first_stage_r, &rn, &bg->r, bg->p); // now, first_stage_rn == r^(2^first_stage - 1)
+	int i = first_stage + 1;
+	for (; i < bg->logn; ++i) {
+		bg->fps[i - first_stage] = calc_fp_with_prefix(
+			pattern,
+			1 << i,
+			bg->fps[i - first_stage - 1],
+			1 << (i - 1),
+			&rn,
+			&bg->r,
+			bg->p
+			);
+	}
+	// Now i is logn, but we prefer to write i because it in cache
+	bg->fps[i - bg->first_stage] = calc_fp_with_prefix(
+		pattern,
+		bg->n,
+		bg->fps[i - bg->first_stage - 1],
+		1 << (i - 1),
+		&rn,
+		&bg->r,
+		bg->p
+		);
+	if (bg->n - (1 << (i - 1)) < bg->logn) {
+		bg->flags |= BG_NEED_BEFORE_LAST_STAGE_FLAG;
+	}
 }
 
 /**
@@ -200,42 +214,37 @@ void _bgps_init_fps(BGStruct* bg, char* pattern) {
 * @return         Dynamically allocated BGStruct to use on stream
 */
 BGStruct* bg_new(char* pattern, size_t n, field_t p) {
-    BGStruct* bg = (BGStruct*) malloc (sizeof(BGStruct));
-    memset(bg, 0, sizeof(BGStruct));
-    bg->n = n;
-    if (n <= BG_SHORT_PATTERN_LENGTH) {
-    	// in case of short pattern, we use the kmp real-time version for the all pattern.
-    	bg->flags |= BG_SHORT_PATTERN_FLAG;
-    	bg->kmp_period = kmp_new(pattern, n);
-    	return bg;
-    }
-    bg->logn = bg_log2(n, 1);
-    bg->loglogn = bg_log2(bg->logn, 1) + 1;
-    _bgps_init_kmp(bg, pattern);
-    
-    //
-    // TODO move to somewhere else, and find way to get rid of p
-    bg->p = p;
-    srand(time(NULL));
-    field_t r;
-    do {
-        r = rand() % p;
-    } while (r <= 1);
-    bg->r.val = r;
-    bg->r.inv = calculate_inverse(r, p);
-    //
-    //
+	BGStruct* bg = (BGStruct*) malloc (sizeof(BGStruct));
+	memset(bg, 0, sizeof(BGStruct));
+	bg->n = n;
+	if (n <= BG_SHORT_PATTERN_LENGTH) {
+		// in case of short pattern, we use the kmp real-time version for the all pattern.
+		bg->flags |= BG_SHORT_PATTERN_FLAG;
+		bg->kmp_period = kmp_new(pattern, n);
+		return bg;
+	}
+	bg->logn = bg_log2(n, 1);
+	bg->loglogn = bg_log2(bg->logn, 1) + 1;
+	_bgps_init_kmp(bg, pattern);
+	bg->p = p;
+	srand(time(NULL));
+	field_t r;
+	do {
+		r = rand() % p;
+	} while (r <= 1);
+	bg->r.val = r;
+	bg->r.inv = calculate_inverse(r, p);
 
-    _bgps_init_fps(bg, pattern);
-    bg->last_fps = (fingerprint_t*) malloc (bg->logn * sizeof(fingerprint_t));
-    bg->vos = (VOLinearProgression*) malloc (N_STAGES(bg) * sizeof(VOLinearProgression));
-    memset(bg->vos, 0, N_STAGES(bg) * sizeof(VOLinearProgression));
-    bg->current_fp = 0;
-    bg->current_r.val = 1;
-    bg->current_r.inv = 1;
-    bg->current_pos = 0;
-    bg->current_stage = 0;
-    return bg;
+	_bgps_init_fps(bg, pattern);
+	bg->last_fps = (fingerprint_t*) malloc (bg->logn * sizeof(fingerprint_t));
+	bg->vos = (VOLinearProgression*) malloc (N_STAGES(bg) * sizeof(VOLinearProgression));
+	memset(bg->vos, 0, N_STAGES(bg) * sizeof(VOLinearProgression));
+	bg->current_fp = 0;
+	bg->current_r.val = 1;
+	bg->current_r.inv = 1;
+	bg->current_pos = 0;
+	bg->current_stage = 0;
+	return bg;
 }
 
 /**
@@ -252,26 +261,25 @@ BGStruct* bg_new(char* pattern, size_t n, field_t p) {
 *               2 - the VOs was empty (after the call, number of VOs is 1)
 */
 int _bgps_add_vo(VOLinearProgression* vos, pos_t pos, fingerprint_t fp, FieldVal* rn, field_t p) {
-	//printf("add vo pos = %llu\n", pos);
-    if (vos->n == 0) {
-    	vos->first.pos = pos;
-    	vos->first.fp = fp;
-    	field_copy(&vos->first.r, rn);
-    	vos->n = 1;
-    	return 2;
-    } else if (vos->n == 1) {
-    	vos->step.pos = pos - vos->first.pos;
-    	vos->step.fp = calc_fp_suffix(fp, vos->first.fp, &vos->first.r, p);
-    	field_div(&vos->step.r, rn, &vos->first.r, p);
-    	vos->n = 2;
-    } else {
-    	if (vos->first.pos + (vos->n + 1) * vos->step.pos != pos) {
-    		// the new position is not in linear proression with the others
-    		return 0;
-    	}
-    	vos->n++;
-    }
-    return 1;
+	if (vos->n == 0) {
+		vos->first.pos = pos;
+		vos->first.fp = fp;
+		field_copy(&vos->first.r, rn);
+		vos->n = 1;
+		return 2;
+	} else if (vos->n == 1) {
+		vos->step.pos = pos - vos->first.pos;
+		vos->step.fp = calc_fp_suffix(fp, vos->first.fp, &vos->first.r, p);
+		field_div(&vos->step.r, rn, &vos->first.r, p);
+		vos->n = 2;
+	} else {
+		if (vos->first.pos + (vos->n + 1) * vos->step.pos != pos) {
+			// the new position is not in linear proression with the others
+			return 0;
+		}
+		vos->n++;
+	}
+	return 1;
 }
 
 /**
@@ -370,19 +378,13 @@ int _bgps_vo_stage_upgrade(BGStruct* bg, size_t stage_num) {
 * @return     Whether the last stage match.
 */
 int _bgps_check_last_stages(BGStruct* bg) {
-	//printf("check last stage(s)\n");
 	int ret = 0;
 	VOLinearProgression* vos;
 	if (bg->flags & BG_HAVE_LAST_STAGE_FLAG) {
-		//printf("checking last stage\n");
 		vos = &bg->vos[N_STAGES(bg) - 1];
 		if (vos->first.pos + bg->n - 1 == bg->current_pos) {
-			//printf("last stage is on position, ");
 			fingerprint_t check_fp = calc_fp_suffix(bg->current_fp, vos->first.fp, &vos->first.r, bg->p);
-			//printf("last stage fp on stream is %llu, last stage pattern fp is %llu\n", check_fp, bg->fps[N_STAGES(bg)]);
-			//printf("VO:first fp is %llu, first r is %llu, current fp is %llu\n", vos->first.fp, vos->first.r.val, bg->current_fp);
 			if (check_fp == bg->fps[N_STAGES(bg)]) {
-				//printf("have a match in position %llu\n", bg->current_pos);
 				ret = 1;
 			}
 			if (_bgps_remove_first_vo(vos, bg->p)) {
@@ -463,9 +465,10 @@ int bg_read_char(BGStruct* bg, char c) {
 	if (bg->flags & BG_SHORT_PATTERN_FLAG) {
 		return kmp_read_char(bg->kmp_period, c);
 	}
-    int ret = 0;
-    bg->current_fp = calc_fp_from_prefix_suffix(bg->current_fp,(fingerprint_t)c, &bg->current_r, bg->p);
-    bg->last_fps[bg->current_pos % bg->logn] = bg->current_fp;
+	int ret = 0;
+	bg->current_fp = calc_fp_from_prefix_suffix(bg->current_fp,
+	                                            (fingerprint_t)c, &bg->current_r, bg->p);
+	bg->last_fps[bg->current_pos % bg->logn] = bg->current_fp;
 	if (_bgps_check_first_stage(bg, c)) {
 		pos_t vo_pos = bg->current_pos - (1 << bg->first_stage) + 1; // current position - the size of the first stage + 1
 		FieldVal vo_r;
@@ -474,7 +477,9 @@ int bg_read_char(BGStruct* bg, char c) {
 		int resp = _bgps_add_vo(&bg->vos[0], vo_pos, vo_fp, &vo_r, bg->p);
 		//printf("response of add vo (first stage) is %d\n", resp);
 		if (!resp) {
-			LOG("Fingerprint Collision, possibly match from %llu to %llu\n", bg->vos[0].first.pos + bg->n, vo_pos + bg->n);
+			LOG("Fingerprint Collision, possibly match from %llu to %llu\n",
+			    bg->vos[0].first.pos + bg->n,
+			    vo_pos + bg->n);
 		}
 		else if (resp == 2) {
 			// if this stage is the last one / before last one
@@ -489,11 +494,11 @@ int bg_read_char(BGStruct* bg, char c) {
 	if (_bgps_check_last_stages(bg)) {
 		ret = 1;
 	}
-    _bgps_vo_stage_upgrade(bg, bg->current_stage);
-    MOD_DEC(bg->current_stage, N_STAGES(bg));
-    field_mul(&bg->current_r, &bg->current_r, &bg->r, bg->p);
-    bg->current_pos++;
-    return ret;
+	_bgps_vo_stage_upgrade(bg, bg->current_stage);
+	MOD_DEC(bg->current_stage, N_STAGES(bg));
+	field_mul(&bg->current_r, &bg->current_r, &bg->r, bg->p);
+	bg->current_pos++;
+	return ret;
 }
 
 /**
@@ -503,12 +508,12 @@ int bg_read_char(BGStruct* bg, char c) {
 */
 void bg_free(BGStruct* bg) {
 	if (!bg) return;
-    if (bg->fps) free(bg->fps);
-    if (bg->vos) free(bg->vos);
-    if (bg->kmp_period) free(bg->kmp_period);
-    if (bg->kmp_remaining) free(bg->kmp_remaining);
-    if (bg->fps) free(bg->fps);
-    free(bg);
+	if (bg->fps) free(bg->fps);
+	if (bg->vos) free(bg->vos);
+	if (bg->kmp_period) free(bg->kmp_period);
+	if (bg->kmp_remaining) free(bg->kmp_remaining);
+	if (bg->fps) free(bg->fps);
+	free(bg);
 }
 
 /*

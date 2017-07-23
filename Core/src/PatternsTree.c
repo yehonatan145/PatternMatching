@@ -366,17 +366,19 @@ PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, void* ob
 * Build a patterns tree from the dictionary files (configured in conf)
 *
 * Also call a given function for each finished converted pattern, to add the patterns to the
-* mps object, so we won't lose it (impossible to discover pattern from node in the partial patterns tree)
+* given object, so we won't lose it (impossible to discover pattern from node in the patterns tree)
 *
 * @param conf                 The program configuration
-* @param mps_obj              The mps object to add the patterns to
-* @param add_patterns_func    The function that adds a pattern to the mps object
+* @param obj                  The object to add the patterns to
+* @param add_patterns_func    The function that adds a pattern to the object
 *
 * @return     A dynamically allocated patterns tree generated from the patterns in the dictionary files
 */
-PatternsTree* patterns_tree_build(Conf* conf, void* mps_obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
+PatternsTree* patterns_tree_build(Conf* conf,
+                                  void* obj,
+                                  void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
 	FullPatternsTree* full_tree = fpt_build(conf);
-	PatternsTree* tree = convert_fpt_to_patterns_tree(full_tree, mps_obj, add_pattern_func);
+	PatternsTree* tree = convert_fpt_to_patterns_tree(full_tree, obj, add_pattern_func);
 	fpt_free(full_tree);
 }
 
@@ -419,7 +421,7 @@ void print_fpt_node(FptNode* node, int indent) {
 	int i;
 	for (cur = node->edge_list; cur; cur = cur->next) {
 		for (i = 0; i < indent; ++i) printf(" ");
-		printf(":"); print_str(cur->text, cur->len); printf("\n");
+		printf(":"); print_binary_str(cur->text, cur->len); printf("\n");
 		print_fpt_node(cur->node, indent + 2);
 	}
 }

@@ -1,3 +1,7 @@
+/**
+* Multi-Pattern Search
+*/
+
 #include "mps.h"
 #include "PatternsTree.h"
 #include "conf.h"
@@ -8,7 +12,7 @@ MpsElem mps_table[MPS_SIZE];
 
 
 /**
-* Setup the table for the mps.
+* Setup the algorithms table for the mps.
 *
 * Should run before parsing arguments, so we can know what algorithms we have at parsing time.
 */
@@ -41,7 +45,6 @@ void init_mps_instances(Conf* conf) {
 * @param id         The id of the pattern
 */
 void add_pattern_to_all_instances(void* pconf, char* pat, size_t len, pattern_id_t id) {
-	// printf("adding pattern: "); print_str(pat, len); printf("\n");
 	Conf* conf = (Conf*)pconf;
 	size_t i, n = conf->n_mps_instances;
 	int algo;

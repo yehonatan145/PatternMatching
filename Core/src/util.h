@@ -18,7 +18,7 @@ static inline void print_usage_and_exit() {
 	exit(EXIT_FAILURE);
 };
 
-static inline void print_str(char* str, size_t len) {
+static inline void print_binary_str(char* str, size_t len) {
 	size_t i;
 	for (i = 0; i < len; ++i) {
 		if (isprint(str[i])) {

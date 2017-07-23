@@ -2,6 +2,7 @@
 #include "util.h"
 #include "conf.h"
 #include "mps.h"
+#include "measure.h"
 
 int main(int argc, char **argv) {
 	program_name = argv[0];
@@ -14,5 +15,7 @@ int main(int argc, char **argv) {
 	mps_table_setup();
 	parse_arguments(argc, argv, conf);
 	init_mps(conf);
-	printf("done program\n");
+	measure_instances_stats(conf);
+	write_stats_to_file(conf);
+	printf("program done\n");
 }
