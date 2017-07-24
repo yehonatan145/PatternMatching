@@ -30,32 +30,32 @@ typedef struct {
 } PatternInternalID;
 
 //====================== Fpt = Full Patterns Tree ======================
-struct s_FptNode;
+struct fpt_node;
 
 /**
 * Struct for holding a list of childs of a node
 */
-typedef struct s_FptEdge {
-	struct s_FptNode* node;
-	struct s_FptEdge* next;
-	struct s_FptEdge* prev;
-	char* text;
-	size_t len;
+typedef struct fpt_edge {
+	struct fpt_node  *node;
+	struct fpt_edge  *next;
+	struct fpt_edge  *prev;
+	char             *text;
+	size_t            len;
 } FptEdge;
 
 /**
 * Struct for a node in the full patterns tree
 */
-typedef struct s_FptNode {
-	struct s_FptNode* parent;
-	PatternInternalID pattern_id;
-	FptEdge* edge_list;
+typedef struct fpt_node {
+	struct fpt_node   *parent;
+	PatternInternalID  pattern_id;
+	FptEdge*           edge_list;
 } FptNode;
 
 /**
 * Struct for the full patterns tree
 */
-typedef struct s_FullPatternsTree {
+typedef struct full_patterns_tree {
 	FptNode* root;
 	size_t longest_pat_len;
 } FullPatternsTree;
@@ -63,23 +63,23 @@ typedef struct s_FullPatternsTree {
 
 //==========================  Patterns Tree =============================
 
-struct s_PatternsTreeNode;
+struct patterns_tree_node;
 
 /**
 * Struct for holding edge of a node in the Patterns Tree
 */
-typedef struct s_PatternsTreeEdge {
-	struct s_PatternsTreeEdge* next;
-	struct s_PatternsTreeNode* node;
+typedef struct patterns_tree_edge {
+	struct patterns_tree_edge* next;
+	struct patterns_tree_node* node;
 } PatternsTreeEdge;
 
 /**
 * Struct for partial patterns tree
 */
-typedef struct s_PatternsTreeNode {
-	struct s_PatternsTreeNode* parent;
-	PatternInternalID pattern_id;
-	PatternsTreeEdge* edge_list;
+typedef struct patterns_tree_node {
+	struct patterns_tree_node  *parent;
+	PatternInternalID           pattern_id;
+	PatternsTreeEdge           *edge_list;
 } PatternsTreeNode;
 
 typedef struct {
@@ -87,11 +87,12 @@ typedef struct {
 } PatternsTree;
 
 /**
-* pattern_id_t should be primitive type (eg. int or pointer) so it can be copied by '='
+* pattern_id_t should be primitive type (eg. int or pointer)
+* so it can be copied by '=' and compared by '=='
 */
 typedef PatternsTreeNode* pattern_id_t;
 
-static pattern_id_t null_pattern_id = NULL;
+#define null_pattern_id NULL;
 
 
 /**************************************************************************************
@@ -101,10 +102,14 @@ static pattern_id_t null_pattern_id = NULL;
 FullPatternsTree* fpt_build(struct _Conf* conf);
 void fpt_free(FullPatternsTree* full_tree);
 
-PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, void* obj,
-				void (*add_pattern_func)(void*, char*, size_t, pattern_id_t));
+PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree *full_tree,
+                                           void *obj,
+                                           void (*add_pattern_func)(void*, char*, size_t, pattern_id_t));
 
-PatternsTree* patterns_tree_build(struct _Conf* conf, void* obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t));
+PatternsTree* patterns_tree_build(struct _Conf* conf,
+                                  void* obj,
+                                  void (*add_pattern_func)(void*, char*, size_t, pattern_id_t));
+
 void patterns_tree_free(PatternsTree* tree);
 
 /**

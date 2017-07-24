@@ -1,4 +1,6 @@
 /**
+* Breslauer-Galil Pattern Searcher
+*
 * The Real-Time Breslauer-Galil algorithm for searching pattern in a stream.
 *
 * Definitions:
@@ -467,7 +469,9 @@ int bg_read_char(BGStruct* bg, char c) {
 	}
 	int ret = 0;
 	bg->current_fp = calc_fp_from_prefix_suffix(bg->current_fp,
-	                                            (fingerprint_t)c, &bg->current_r, bg->p);
+	                                            (fingerprint_t)c,
+	                                            &bg->current_r,
+	                                            bg->p);
 	bg->last_fps[bg->current_pos % bg->logn] = bg->current_fp;
 	if (_bgps_check_first_stage(bg, c)) {
 		pos_t vo_pos = bg->current_pos - (1 << bg->first_stage) + 1; // current position - the size of the first stage + 1
@@ -480,8 +484,7 @@ int bg_read_char(BGStruct* bg, char c) {
 			LOG("Fingerprint Collision, possibly match from %llu to %llu\n",
 			    bg->vos[0].first.pos + bg->n,
 			    vo_pos + bg->n);
-		}
-		else if (resp == 2) {
+		} else if (resp == 2) {
 			// if this stage is the last one / before last one
 			if (N_STAGES(bg) == 1) {
 				bg->flags |= BG_HAVE_LAST_STAGE_FLAG;
@@ -495,7 +498,7 @@ int bg_read_char(BGStruct* bg, char c) {
 		ret = 1;
 	}
 	_bgps_vo_stage_upgrade(bg, bg->current_stage);
-	MOD_DEC(bg->current_stage, N_STAGES(bg));
+	MOD_DEC(bg->current_stage, bg->flags & BG_NEED_BEFORE_LAST_STAGE_FLAG ? N_STAGES(bg) - 2 : N_STAGES(bg) - 1);
 	field_mul(&bg->current_r, &bg->current_r, &bg->r, bg->p);
 	bg->current_pos++;
 	return ret;

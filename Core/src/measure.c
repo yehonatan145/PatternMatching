@@ -1,4 +1,5 @@
 #include "measure.h"
+#include "conf.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -9,6 +10,7 @@
 #include <sys/ioctl.h>
 #include <linux/perf_event.h>
 #include <asm/unistd.h>
+#include <asm/types.h>
 #include <sys/syscall.h>
 #include <linux/hw_breakpoint.h>
 #include <errno.h>
@@ -18,8 +20,8 @@
 
 // IMPORTANT: the size of this array should match the macro N_PERF_EVENTS defined in measure.h
 PerfEventType perf_events[] = {
-                {PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS, "page faults", 0, 0},
-                {PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS, "number of instructions", 0, 0}
+                {PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS, "page faults"},
+                {PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS, "number of instructions"}
                 };
 
 /**
@@ -103,7 +105,7 @@ void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats) {
 	fill_perf_event_attr(&pea, perf_events[0].type, perf_events[0].config);
 	fds[0] = perf_event_open(&pea, 0, -1, -1, 0);
 	ioctl(fds[0], PERF_EVENT_IOC_ID, &ids[0]);
-	for (i = 0; i < N_PERF_EVENTS; ++i) {
+	for (i = 1; i < N_PERF_EVENTS; ++i) {
 		fill_perf_event_attr(&pea, perf_events[i].type, perf_events[i].config);
 		fds[i] = perf_event_open(&pea, 0, -1, fds[0], 0);
 		ioctl(fds[i], PERF_EVENT_IOC_ID, &ids[i]);

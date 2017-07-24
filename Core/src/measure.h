@@ -2,10 +2,11 @@
 #define MEASURE_H
 
 #include "mps.h"
+#include <stdint.h>
 
 struct _Conf;
 
-typedef struct s_PerfEventType {
+typedef struct {
 	uint32_t   type;
 	uint64_t   config;
 	char      *desc; // description of the event type and config
@@ -18,7 +19,7 @@ typedef struct s_PerfEventType {
 
 extern PerfEventType perf_events[N_PERF_EVENTS];
 
-typedef struct s_InstanceStats {
+typedef struct instance_stats {
 	uint64_t perf_stats[N_PERF_EVENTS];
 	double success_rate;
 	// TODO add stats

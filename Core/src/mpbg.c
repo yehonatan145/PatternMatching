@@ -1,16 +1,33 @@
 #include "mpbg.h"
 
 /**
-* The mps regstering function of mpbg algorithm
+* struct used to save patterns information as list (used BEFORE mpbg compilation)
 */
-void mps_bg_register() {
-	mps_table[MPS_BG].name = "bg";
-	mps_table[MPS_BG].create = mpbg_create;
-	mps_table[MPS_BG].add_pattern = mpbg_add_pattern;
-	mps_table[MPS_BG].compile = mpbg_compile;
-	mps_table[MPS_BG].read_char = mpbg_read_char;
-	mps_table[MPS_BG].free = mpbg_free;
-}
+typedef struct mpbg_pattern_info_list {
+	struct mpbg_pattern_info_list *next;
+	BGStruct                      *obj;
+	pattern_id_t                   id;
+} MPBGPatternInfoList;
+
+/**
+* struct used to save patterns information in array (used AFTER mpbg compilation)
+*/
+typedef struct {
+	BGStruct     *obj;
+	pattern_id_t  id;
+} MPBGPatternInfo;
+
+/**
+* struct for mpbg object
+*/
+typedef struct {
+	union {
+		MPBGPatternInfoList  *patsList; // before compilation
+		MPBGPatternInfo      *pats;     // after compilation
+	} u;
+	size_t n_pats;
+} MPBGStruct;
+
 
 /**
 * Create the mpbg object
@@ -113,4 +130,16 @@ void mpbg_free(void* obj) {
 	}
 	free(mpbg->u.pats);
 	free(mpbg);
+}
+
+/**
+* The mps regstering function of mpbg algorithm
+*/
+void mps_bg_register() {
+	mps_table[MPS_BG].name = "bg";
+	mps_table[MPS_BG].create = mpbg_create;
+	mps_table[MPS_BG].add_pattern = mpbg_add_pattern;
+	mps_table[MPS_BG].compile = mpbg_compile;
+	mps_table[MPS_BG].read_char = mpbg_read_char;
+	mps_table[MPS_BG].free = mpbg_free;
 }

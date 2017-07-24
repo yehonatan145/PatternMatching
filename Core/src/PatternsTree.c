@@ -379,6 +379,7 @@ PatternsTree* patterns_tree_build(Conf* conf,
                                   void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
 	FullPatternsTree* full_tree = fpt_build(conf);
 	PatternsTree* tree = convert_fpt_to_patterns_tree(full_tree, obj, add_pattern_func);
+	print_fpt(full_tree);
 	fpt_free(full_tree);
 }
 

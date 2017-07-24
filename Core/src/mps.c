@@ -5,7 +5,9 @@
 #include "mps.h"
 #include "PatternsTree.h"
 #include "conf.h"
+// include the algorithms
 #include "mpbg.h"
+#include "mpac.h"
 
 
 MpsElem mps_table[MPS_SIZE];
@@ -17,6 +19,7 @@ MpsElem mps_table[MPS_SIZE];
 * Should run before parsing arguments, so we can know what algorithms we have at parsing time.
 */
 void mps_table_setup() {
+	mps_ac_register();
 	mps_bg_register();
 }
 

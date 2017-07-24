@@ -7,7 +7,8 @@ struct _Conf;
 
 // Multi-Pattern Search Algorithms
 enum {
-	MPS_BG = 0, // Multi-Pattern Brausler-Galil
+	MPS_AC = 0,   // Multi-Pattern Aho-Corasick
+	MPS_BG,       // Multi-Pattern Brausler-Galil
 	MPS_SIZE
 };
 
