@@ -13,6 +13,7 @@ void* mpbg_create(void);
 void mpbg_add_pattern(void* obj, char* pat, size_t len, pattern_id_t id);
 void mpbg_compile(void* obj);
 pattern_id_t mpbg_read_char(void* obj, char c);
+size_t mpbg_total_mem(void* obj);
 void mpbg_free(void* obj);
 
 void mps_bg_register();

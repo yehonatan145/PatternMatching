@@ -33,6 +33,7 @@ void mps_table_setup() {
 void init_mps_instances(Conf* conf) {
 	size_t i;
 	conf->mps_instances = (MpsInstance*) malloc(MPS_SIZE * sizeof(MpsInstance));
+	conf->n_mps_instances = MPS_SIZE;
 	for (i = 0; i < MPS_SIZE; ++i) {
 		conf->mps_instances[i].algo = i;
 		conf->mps_instances[i].obj = mps_table[i].create();

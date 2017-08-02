@@ -174,7 +174,7 @@ void _bgps_init_kmp(BGStruct* bg, char* pattern) {
 * @param pattern  The pattern of the bg struct
 */
 void _bgps_init_fps(BGStruct* bg, char* pattern) {
-	bg->fps = (fingerprint_t*) malloc ((N_STAGES(bg) + 1) * sizeof(fingerprint_t));    
+	bg->fps = (fingerprint_t*) malloc ((N_STAGES(bg) + 1) * sizeof(fingerprint_t));
 	// There is N_STAGES + 1 fingerprints, because the all pattern's fingerprint must be saved, but it is not a stage.
 	FieldVal rn;
 	size_t first_stage = bg->first_stage;
@@ -239,7 +239,7 @@ BGStruct* bg_new(char* pattern, size_t n, field_t p) {
 
 	_bgps_init_fps(bg, pattern);
 	bg->last_fps = (fingerprint_t*) malloc (bg->logn * sizeof(fingerprint_t));
-	bg->vos = (VOLinearProgression*) malloc (N_STAGES(bg) * sizeof(VOLinearProgression));
+	bg->vos = (VOLinearProgression*) malloc (N_STAGES(bg) * sizeof(VOLinearProgression));	
 	memset(bg->vos, 0, N_STAGES(bg) * sizeof(VOLinearProgression));
 	bg->current_fp = 0;
 	bg->current_r.val = 1;
@@ -247,6 +247,19 @@ BGStruct* bg_new(char* pattern, size_t n, field_t p) {
 	bg->current_pos = 0;
 	bg->current_stage = 0;
 	return bg;
+}
+
+/**
+* Return the total memory used for this struct
+*/
+size_t bg_get_total_mem(BGStruct* bg) {
+	if (bg == NULL) return 0;
+	return sizeof(BGStruct) +                              // for the struct itself
+	       (N_STAGES(bg) + 1) * sizeof(fingerprint_t) +    // for fps member
+	       N_STAGES(bg) * sizeof(VOLinearProgression) +    // for vos member
+	       bg->logn * sizeof(fingerprint_t) +              // for last_fps member
+	       kmp_get_total_mem(bg->kmp_period) +             // for kmp_period member
+	       kmp_get_total_mem(bg->kmp_remaining);           // for kmp_remaining member
 }
 
 /**

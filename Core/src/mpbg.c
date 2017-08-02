@@ -117,6 +117,25 @@ pattern_id_t mpbg_read_char(void* obj, char c) {
 }
 
 /**
+* The mpbg total memory function
+*
+* @param obj    The mpbg object
+*
+* @return       The total memory allocated for this object
+*/
+size_t mpbg_total_mem(void* obj) {
+	if (obj == NULL) return 0;
+	MPBGStruct* mpbg = (MPBGStruct*)obj;
+	size_t total_mem = sizeof(MPBGStruct), i, n_pats = mpbg->n_pats;
+	total_mem += n_pats * sizeof(MPBGPatternInfo);
+	MPBGPatternInfo* cur = mpbg->u.pats;
+	for (i = n_pats; i; --i, ++cur) {
+		total_mem += bg_get_total_mem(cur->obj);
+	}
+	return total_mem;
+}
+
+/**
 * Free the mpbg object (should be called AFTER compilation using mpbg_compile)
 *
 * @param obj    The mpbg object to free
@@ -133,7 +152,7 @@ void mpbg_free(void* obj) {
 }
 
 /**
-* The mps regstering function of mpbg algorithm
+* The mps registering function of Multi-Pattern Breslauer-Galil algorithm
 */
 void mps_bg_register() {
 	mps_table[MPS_BG].name = "bg";
@@ -141,5 +160,6 @@ void mps_bg_register() {
 	mps_table[MPS_BG].add_pattern = mpbg_add_pattern;
 	mps_table[MPS_BG].compile = mpbg_compile;
 	mps_table[MPS_BG].read_char = mpbg_read_char;
+	mps_table[MPS_BG].total_mem = mpbg_total_mem;
 	mps_table[MPS_BG].free = mpbg_free;
 }

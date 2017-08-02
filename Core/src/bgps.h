@@ -87,13 +87,13 @@ typedef struct {
 	fingerprint_t		*last_fps; // Saves last logn figerprints
 
 	size_t n;
-	int flags;
 	size_t logn;
 	size_t loglogn; // ceil(log(log(n))) + 1
 	size_t first_stage; // The first stage
 	size_t current_stage; // This is the index in vos, the real stage is current_stage + first_stage
 	int n_kmp_period; // The number of periods that there are in first stage
 	int current_n_kmp_period; // The number of periods currently matched
+	int flags;
 } BGStruct;
 
 // Calculate number of stage given BGStruct
@@ -105,10 +105,10 @@ typedef struct {
 *		FUNCTIONS TO EXTERN:
 ******************************************************************************************************/
 
-// TODO think of way to get rid of p
 BGStruct* bg_new(char* pattern, size_t n, field_t p);
 int bg_read_char(BGStruct* bg, char c);
 void bg_free(BGStruct* bg);
+size_t bg_get_total_mem(BGStruct* bg);
 
 static inline size_t bg_get_length(BGStruct* bg) {
 	return bg->n;

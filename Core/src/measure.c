@@ -19,10 +19,10 @@
 #include <time.h>
 
 // IMPORTANT: the size of this array should match the macro N_PERF_EVENTS defined in measure.h
-PerfEventType perf_events[] = {
+/*PerfEventType perf_events[] = {
                 {PERF_TYPE_SOFTWARE, PERF_COUNT_SW_PAGE_FAULTS, "page faults"},
                 {PERF_TYPE_HARDWARE, PERF_COUNT_HW_INSTRUCTIONS, "number of instructions"}
-                };
+                };*/
 
 /**
 * struct used for returning values from performance files
@@ -128,6 +128,7 @@ void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats) {
 	}
 
 	// TODO measure success rate, and enter it to given "stats" parameter
+	printf("the total memory for instance algo = %d is %lu\n", inst->algo, mps_table[inst->algo].total_mem(inst->obj));
 }
 
 /**

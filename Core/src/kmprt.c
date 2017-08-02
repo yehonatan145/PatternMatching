@@ -27,7 +27,7 @@
 *            i.e. the i-th position is the last position we know we have match in.
 */
 size_t* kmp_create_failure_table(char* pattern, size_t n) {
-	size_t *failure_table = (size_t*) malloc ((n + 1) * sizeof(int));
+	size_t *failure_table = (size_t*) malloc ((n + 1) * sizeof(size_t));
 	failure_table[0] = failure_table[1] = 0;
 	size_t pos = 2, cnd = 0;
 	while (pos < n + 1) {
@@ -59,6 +59,19 @@ KMPRealTime* kmp_new(char* pattern, size_t n) {
 	kmp->buffer = (char*) malloc (n * sizeof(char));
 	kmp->failure_table = kmp_create_failure_table(pattern, n);
 	return kmp;
+}
+
+/**
+* Get the total memory used for a KMP struct.
+*
+* Return the size of the struct, plus all the allocated memory which is:
+*   n * sizeof(char) for the pattern
+*   n * sizeof(char) for the buffer
+*   (n + 1) * sizeof(size_t) for the failure table
+*/
+size_t kmp_get_total_mem(KMPRealTime* kmp) {
+	if (kmp == NULL) return 0;
+	return sizeof(KMPRealTime) + kmp->n * (2 * sizeof(char) + sizeof(size_t)) + sizeof(size_t);
 }
 
 /**

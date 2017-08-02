@@ -38,7 +38,6 @@ typedef struct {
 	};
 	size_t n_states;
 	size_t current_state;
-	size_t total_mem; // in bytes
 } AC;
 
 typedef struct qnode {
@@ -260,8 +259,6 @@ void ac_compile(void* obj) {
 	AC *ac = (AC*)obj;
 	State *states = (State*)malloc(ac->n_states * sizeof(State));
 	memset(states, 0, ac->n_states * sizeof(State));
-	// the total memory for the ac struct (except the total_mem member)
-	ac->total_mem = sizeof(AC) + ac->n_states * sizeof(State) - sizeof(size_t);
 
 	convert_tree_to_states(ac->root, states, 0); // should return n_states
 	add_failure_links(states);
@@ -297,6 +294,19 @@ pattern_id_t ac_read_char(void* obj, char c) {
 }
 
 /**
+* Aho-Corasick get total memory function.
+*
+* @param obj     The ac object
+*
+* @return        The total memory used for this object
+*/
+size_t ac_total_mem(void* obj) {
+	if (obj == NULL) return 0;
+	AC* ac = (AC*)obj;
+	return sizeof(AC) + ac->n_states * sizeof(State);
+}
+
+/**
 * Free the memory of the ac object (must be done after compilation).
 *
 * @param obj    The ac object to free
@@ -316,5 +326,6 @@ void mps_ac_register() {
 	mps_table[MPS_AC].add_pattern = ac_add_pattern;
 	mps_table[MPS_AC].compile = ac_compile;
 	mps_table[MPS_AC].read_char = ac_read_char;
+	mps_table[MPS_AC].total_mem = ac_total_mem;
 	mps_table[MPS_AC].free = ac_free;
 }

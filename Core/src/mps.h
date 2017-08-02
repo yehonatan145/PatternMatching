@@ -53,6 +53,7 @@ typedef struct {
 	void (*add_pattern)(void*, char*, size_t, pattern_id_t);
 	void (*compile)(void*);
 	pattern_id_t (*read_char)(void*, char);
+	size_t (*total_mem)(void*);
 	void (*free)(void*);
 } MpsElem;
 
