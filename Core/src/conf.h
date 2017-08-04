@@ -16,6 +16,7 @@ typedef struct _Conf {
 	size_t max_pat_len;
 	MpsInstance* mps_instances;
 	InstanceStats* mps_instances_stats;
+	MpsInstance reliable_mps_instance;
 	size_t n_mps_instances;
 	PatternsTree* patterns_tree;
 	char* output_file_name;

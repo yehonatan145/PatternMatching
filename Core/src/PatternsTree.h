@@ -9,14 +9,6 @@
 #include <stdlib.h>
 #include <errno.h>
 
-/**************************************************************************************
-*         D E F I N E S
-**************************************************************************************/
-
-#define SET_NULL_PATTERN_INTERNAL_ID(id) copy_pattern_internal_id(&(id), &null_pattern_internal_id)
-#define IS_NULL_PATTERN_INTERNAL_ID(id) ((id).file_number == null_pattern_internal_id.file_number \
-									 && (id).line_number == null_pattern_internal_id.line_number)
-
 
 /**************************************************************************************
 *         D A T A     S T R U C T U R E S
@@ -92,7 +84,7 @@ typedef struct {
 */
 typedef PatternsTreeNode* pattern_id_t;
 
-#define null_pattern_id NULL;
+#define null_pattern_id NULL
 
 
 /**************************************************************************************
@@ -112,15 +104,10 @@ PatternsTree* patterns_tree_build(struct _Conf* conf,
 
 void patterns_tree_free(PatternsTree* tree);
 
-/**
-* Copy the internal id content
-*/
-static inline void copy_pattern_internal_id(PatternInternalID* dest, PatternInternalID* src) {
-	dest->file_number = src->file_number;
-	dest->line_number = src->line_number;
-};
+// return whether the first pattern is a suffix of the second
+int is_pattern_suffix(pattern_id_t first, pattern_id_t second);
 
-extern PatternInternalID null_pattern_internal_id; // defeinition in .c file
+
 
 
 

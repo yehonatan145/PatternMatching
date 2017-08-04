@@ -254,12 +254,38 @@ BGStruct* bg_new(char* pattern, size_t n, field_t p) {
 */
 size_t bg_get_total_mem(BGStruct* bg) {
 	if (bg == NULL) return 0;
+	if (bg->flags & BG_SHORT_PATTERN_FLAG) {
+		return sizeof(BGStruct) + kmp_get_total_mem(bg->kmp_period);
+	}
 	return sizeof(BGStruct) +                              // for the struct itself
 	       (N_STAGES(bg) + 1) * sizeof(fingerprint_t) +    // for fps member
 	       N_STAGES(bg) * sizeof(VOLinearProgression) +    // for vos member
 	       bg->logn * sizeof(fingerprint_t) +              // for last_fps member
 	       kmp_get_total_mem(bg->kmp_period) +             // for kmp_period member
 	       kmp_get_total_mem(bg->kmp_remaining);           // for kmp_remaining member
+}
+
+/**
+* Reset the bg to the initial state
+*
+* @param bg    The bg struct to reset
+*/
+void bg_reset(BGStruct* bg) {
+	if (bg->flags & BG_SHORT_PATTERN_FLAG) {
+		kmp_reset(bg->kmp_period);
+		return;
+	}
+	bg->current_r.val = 1;
+	bg->current_r.inv = 1;
+	bg->current_pos = 0;
+	bg->current_fp = 0;
+	bg->current_stage = 0;
+	bg->last_kmp_period_match_pos = 0;
+	bg->current_n_kmp_period = 0;
+	memset(bg->vos, 0, N_STAGES(bg) * sizeof(VOLinearProgression));
+	kmp_reset(bg->kmp_period);
+	kmp_reset(bg->kmp_remaining);
+	bg->flags &= ~BG_HAVE_LAST_STAGE_FLAG & ~BG_HAVE_BEFORE_LAST_STAGE_FLAG;
 }
 
 /**
@@ -528,7 +554,7 @@ void bg_free(BGStruct* bg) {
 	if (bg->vos) free(bg->vos);
 	if (bg->kmp_period) free(bg->kmp_period);
 	if (bg->kmp_remaining) free(bg->kmp_remaining);
-	if (bg->fps) free(bg->fps);
+	if (bg->last_fps) free(bg->last_fps);
 	free(bg);
 }
 

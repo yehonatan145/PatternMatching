@@ -12,7 +12,19 @@ void print_patterns_tree(PatternsTree* tree);
 * 2. Convert the full tree to regular tree (where every node have only his parent)
 */
 
+/**
+* Copy the internal id content
+*/
+static inline void copy_pattern_internal_id(PatternInternalID* dest, PatternInternalID* src) {
+	dest->file_number = src->file_number;
+	dest->line_number = src->line_number;
+};
+
 PatternInternalID null_pattern_internal_id = {-1,-1};
+
+#define SET_NULL_PATTERN_INTERNAL_ID(id) copy_pattern_internal_id(&(id), &null_pattern_internal_id)
+#define IS_NULL_PATTERN_INTERNAL_ID(id) ((id).file_number == null_pattern_internal_id.file_number \
+                                         && (id).line_number == null_pattern_internal_id.line_number)
 
 /**
 * Check whether one string is (real) suffix of another
@@ -381,6 +393,25 @@ PatternsTree* patterns_tree_build(Conf* conf,
 	PatternsTree* tree = convert_fpt_to_patterns_tree(full_tree, obj, add_pattern_func);
 	print_fpt(full_tree);
 	fpt_free(full_tree);
+}
+
+/**
+* Return whether the first pattern is suffix of the second one
+*
+* @param first       The pattern to check if it is suffix of the ohter
+* @param second      The pattern to check if it contains the other as a suffix
+*
+* @return            1 if the first is suffix of the second, 0 otherwise
+*/
+int is_pattern_suffix(pattern_id_t first, pattern_id_t second) {
+	PatternsTreeNode* suf = first;
+	PatternsTreeNode* cur = second;
+	if (suf == NULL) return 0;
+	while (cur != NULL) {
+		if (cur == suf) return 1;
+		cur = cur->parent;
+	}
+	return 0;
 }
 
 /**

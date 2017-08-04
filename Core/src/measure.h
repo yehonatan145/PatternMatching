@@ -21,10 +21,23 @@ static PerfEventType perf_events[] = {
 
 #define N_PERF_EVENTS (sizeof(perf_events) / sizeof(PerfEventType))
 
+/**
+* Struct for saving the success rete of the algorithm
+*
+* All the members are the number of characters that had their name
+* (e.g. false_pos is the number of characters that were false positive)
+*/
+typedef struct {
+	size_t success;     // the algo return the longest pattern that match
+	size_t false_pos;   // the algo return pattern that isn't realy matching
+	size_t false_neg;   // the algo return that there isn't any match, even though there is
+	size_t partial_suc; // the algo return a pattern that is a match, but not the longest one that match
+} SuccessRate;
+
 typedef struct instance_stats {
 	uint64_t perf_stats[N_PERF_EVENTS];
-	double success_rate;
-	// TODO add stats
+	SuccessRate suc_rate;
+	size_t total_mem;
 } InstanceStats;
 
 void measure_instances_stats(struct _Conf* conf);

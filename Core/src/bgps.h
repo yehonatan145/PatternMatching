@@ -109,6 +109,7 @@ BGStruct* bg_new(char* pattern, size_t n, field_t p);
 int bg_read_char(BGStruct* bg, char c);
 void bg_free(BGStruct* bg);
 size_t bg_get_total_mem(BGStruct* bg);
+void bg_reset(BGStruct* bg);
 
 static inline size_t bg_get_length(BGStruct* bg) {
 	return bg->n;

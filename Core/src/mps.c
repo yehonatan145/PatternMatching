@@ -38,6 +38,8 @@ void init_mps_instances(Conf* conf) {
 		conf->mps_instances[i].algo = i;
 		conf->mps_instances[i].obj = mps_table[i].create();
 	}
+	conf->reliable_mps_instance.algo = MPS_AC;
+	conf->reliable_mps_instance.obj = mps_table[MPS_AC].create();
 }
 
 /**
@@ -58,6 +60,9 @@ void add_pattern_to_all_instances(void* pconf, char* pat, size_t len, pattern_id
 		obj = conf->mps_instances[i].obj;
 		mps_table[algo].add_pattern(obj, pat, len, id);
 	}
+	algo = conf->reliable_mps_instance.algo;
+	obj = conf->reliable_mps_instance.obj;
+	mps_table[algo].add_pattern(obj, pat, len, id);
 }
 
 /**
@@ -74,6 +79,9 @@ void compile_all_instances(Conf* conf) {
 		obj = conf->mps_instances[i].obj;
 		mps_table[algo].compile(obj);
 	}
+	algo = conf->reliable_mps_instance.algo;
+	obj = conf->reliable_mps_instance.obj;
+	mps_table[algo].compile(obj);
 }
 
 /**

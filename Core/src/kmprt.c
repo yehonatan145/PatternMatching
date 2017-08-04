@@ -75,6 +75,18 @@ size_t kmp_get_total_mem(KMPRealTime* kmp) {
 }
 
 /**
+* Reset the kmp state to the initial state
+*
+* @param kmp     The kmp struct to reset
+*/
+void kmp_reset(KMPRealTime* kmp) {
+	kmp->offset = 0;
+	kmp->buf_start = kmp->buf_end = 0;
+	kmp->flags &= ~KMP_HAVE_BUFFER_FLAG;
+	kmp->flags &= ~KMP_LOOP_FAIL_FLAG;
+}
+
+/**
 * Return the period length of the pattern.
 *
 * @param pattern  The pattern

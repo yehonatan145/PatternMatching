@@ -14,7 +14,7 @@ Real-Time version of the KMP algorithm (by Galil) that is also used to find peri
 *		DEFINITIONS:
 ******************************************************************************************************/
 
-#define KMP_LOOP_FAIL_FLAG 1 // flag that say: "there is still need to loop through failure function"
+#define KMP_LOOP_FAIL_FLAG 1 // there is still need to loop through failure function
 #define KMP_HAVE_BUFFER_FLAG 2 // flag for having chars in buffer
 
 typedef struct {
@@ -37,6 +37,7 @@ KMPRealTime* kmp_new(char* pattern, size_t n);
 int kmp_read_char(KMPRealTime* kmp, char c);
 void kmp_free(KMPRealTime* kmp);
 size_t kmp_get_total_mem(KMPRealTime* kmp);
+void kmp_reset(KMPRealTime* kmp);
 
 size_t kmp_get_period(char* pattern, size_t n);
 size_t* kmp_create_failure_table(char* pattern, size_t n);

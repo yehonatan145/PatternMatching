@@ -148,7 +148,7 @@ size_t convert_tree_to_states(TreeNode* node, State* states, size_t from) {
 void add_failure_to_state(State* states, size_t parent, unsigned char c) {
 	size_t fs = states[parent].failure_state;
 	size_t state = states[parent].children[c];
-	while (!states[fs].children[c] && !fs) {
+	while (!states[fs].children[c] && fs) {
 		fs = states[fs].failure_state;
 	}
 	if (states[fs].children[c]) {
@@ -241,7 +241,7 @@ void ac_add_pattern(void* obj, char* pat, size_t len, pattern_id_t id) {
 		next = (TreeNode*)malloc(sizeof(TreeNode));
 		memset(next, 0, sizeof(TreeNode));
 		next->id = null_pattern_id;
-		cur->children[pat[i++]] = next;
+		cur->children[pat[i]] = next;
 		cur = next;
 		ac->n_states++;
 	}
@@ -281,7 +281,7 @@ pattern_id_t ac_read_char(void* obj, char c) {
 	AC *ac = (AC*)obj;
 	size_t current_state = ac->current_state;
 	State* states = ac->states;
-	while (!states[current_state].children[c] && !current_state) {
+	while (!states[current_state].children[c] && current_state) {
 		current_state = states[current_state].failure_state;
 	}
 	if (states[current_state].children[c]) {
@@ -307,6 +307,16 @@ size_t ac_total_mem(void* obj) {
 }
 
 /**
+* Aho-Corasick reset function (reset the object back to initial state)
+*
+* @param obj    The ac object
+*/
+void ac_reset(void* obj) {
+	AC* ac = (AC*)obj;
+	ac->current_state = 0;
+}
+
+/**
 * Free the memory of the ac object (must be done after compilation).
 *
 * @param obj    The ac object to free
@@ -321,11 +331,12 @@ void ac_free(void *obj) {
 * The mps registering function of the Aho-Corasick Algorithm.
 */
 void mps_ac_register() {
-	mps_table[MPS_AC].name = "ac";
+	mps_table[MPS_AC].name = "Aho-Corasick";
 	mps_table[MPS_AC].create = ac_create;
 	mps_table[MPS_AC].add_pattern = ac_add_pattern;
 	mps_table[MPS_AC].compile = ac_compile;
 	mps_table[MPS_AC].read_char = ac_read_char;
 	mps_table[MPS_AC].total_mem = ac_total_mem;
+	mps_table[MPS_AC].reset = ac_reset;
 	mps_table[MPS_AC].free = ac_free;
 }
