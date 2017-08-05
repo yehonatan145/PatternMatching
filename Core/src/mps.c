@@ -1,13 +1,17 @@
 /**
 * Multi-Pattern Search
+*
+* Implement the initialization of the mps engine in the configuration
 */
 
 #include "mps.h"
 #include "PatternsTree.h"
 #include "conf.h"
+
 // include the algorithms
 #include "mpbg.h"
 #include "mpac.h"
+#include "mplmac.h"
 
 
 MpsElem mps_table[MPS_SIZE];
@@ -21,6 +25,7 @@ MpsElem mps_table[MPS_SIZE];
 void mps_table_setup() {
 	mps_ac_register();
 	mps_bg_register();
+	mps_lmac_register();
 }
 
 /**

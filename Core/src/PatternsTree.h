@@ -31,8 +31,21 @@ typedef struct fpt_edge {
 	struct fpt_node  *node;
 	struct fpt_edge  *next;
 	struct fpt_edge  *prev;
+	/**
+	* The "text" member is the prefix of the child pattern until the parent pattern
+	* e.g. if the parent pattern is "de", and the child pattern is "abcde",
+	* then the "text" member in the corresponding edge is "abc".
+	* 
+	* In that way, by moving from the root to some node through some edges,
+	* then by adding each "text" member in each edge, as a prefix of the total text,
+	* we get the pattern of the node.
+	* e.g. if the patterns are "abcdef", "cdef", "ef",
+	* then we have: root ---parent of---> "ef" ---parent of---> "cdef" ---parent of---> "abcdef",
+	* with edges:   root -----"ef"------> "ef" -----"cd"------> "cdef" -----"ab"------> "abcdef"
+	* so from the root to "abcdef" we have the edges "ef","cd","ab" (which construct "abcdef").
+	*/
 	char             *text;
-	size_t            len;
+	size_t            len; // the length of text member
 } FptEdge;
 
 /**

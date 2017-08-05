@@ -1,3 +1,12 @@
+/**
+* Measuring Multi-Pattern Matching Algorithms performance, and success rate.
+*
+* The performance measurements are defined in the "perf_events" static variable which defined
+* in the header file of this file.
+*
+* We read the stream files in blocks of size STREAM_BUFFER_SIZE, and using the algorithm on every block
+* (so the stream to read would be in memory and not in file, because reading from file change performance)
+*/
 #include "measure.h"
 #include "conf.h"
 #include <sys/types.h>
@@ -116,7 +125,6 @@ void measure_success_rate(SuccessRate* suc_rate, pattern_id_t algo_results[], pa
 	for (i = 0; i < n; ++i) {
 		real = real_results[i];
 		algo = algo_results[i];
-		printf("on character %d: real = %ld, algo = %ld\n", i, real, algo);
 		if (real == algo) {
 			suc_rate->success++;
 		} else if (is_pattern_suffix(algo, real)) {
@@ -138,7 +146,6 @@ void measure_success_rate(SuccessRate* suc_rate, pattern_id_t algo_results[], pa
 * @param stats     Where to put the measurements that were measured
 */
 void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats, Conf* conf) {
-	printf("start meaure instance, algo = %d\n", inst->algo);
 	int fds[N_PERF_EVENTS];
 	uint64_t ids[N_PERF_EVENTS];
 	size_t i;
@@ -156,7 +163,6 @@ void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats, Conf
 	init_perf_events(fds, ids);
 
 	// start the measuring
-	printf("start the measuring\n");
 	ioctl(fds[0], PERF_EVENT_IOC_RESET, PERF_IOC_FLAG_GROUP);
 	for (i = 0; i < n_stream_files; ++i) {
 		size_t j;
@@ -167,24 +173,18 @@ void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats, Conf
 		void* reliable_obj = conf->reliable_mps_instance.obj;
 		int fd;
 
-		printf("before reseting algos\n");
 		mps_table[conf->reliable_mps_instance.algo].reset(reliable_obj);
-		printf("after reseting reliable\n");
 		mps_table[inst->algo].reset(obj);
-		printf("after reseting algos\n");
 		fd = open(stream_files[i], O_RDONLY);
-		printf("after opening file %s, fd = %d\n", stream_files[i], fd);
 		do {
 			len_read = read(fd, stream_buffer, STREAM_BUFFER_SIZE);
 
 			// perform the alogithm on the stream buffer and measure it
-			printf("before algo perf\n");
 			ioctl(fds[0], PERF_EVENT_IOC_ENABLE, PERF_IOC_FLAG_GROUP);
 			for (j = 0; j < len_read; ++j) {
 				algo_results[j] = read_char_func(obj, stream_buffer[j]);
 			}
 			ioctl(fds[0], PERF_EVENT_IOC_DISABLE, PERF_IOC_FLAG_GROUP);
-			printf("after algo perf\n");
 
 			// perform the raliable alogirthm to discover real results, and measure success rate
 			for (j = 0; j < len_read; ++j) {
@@ -196,7 +196,6 @@ void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats, Conf
 	}
 	
 	// read the results
-	printf("reading measurements results\n");
 	read(fds[0], perf_buf, PERF_BUF_SIZE);
 	for (i = 0; i < N_PERF_EVENTS; ++i) {
 		index = find_index_of_id(read_stats, ids[i]);
@@ -230,7 +229,7 @@ void measure_instances_stats(Conf* conf) {
 * @param conf    The configuration struct with the statistic and the output file name
 */
 void write_stats_to_file(Conf* conf) {
-	// TODO implement
+	// TODO implement, meanwhile print the results
 	for (int i = 0; i < conf->n_mps_instances; ++i) {
 		InstanceStats* is = &conf->mps_instances_stats[i];
 		printf("algo %d:\n", i);

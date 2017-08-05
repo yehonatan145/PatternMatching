@@ -1,3 +1,36 @@
+/**
+* Implementation of Patterns Tree.
+*
+* We use Patterns Tree in order to be able to find all matching patterns 
+* in a position based on the longest pattern that had a match there.
+*
+* The Patterns Tree works as follows:
+*     We construct a tree where every node is a pattern, and node x is child of node y
+*     only if the pattern of y is suffix of the pattern of x.
+*
+*     In every node, we are not keeping the pattern itself, but rather an internal id
+*     of the pattern which should identify the pattern. (currently the internal id is the
+*     file number and line number of the pattern in the dictionary files)
+*
+*     In that way, if we know the node who have the longest pattern matching at some position,
+*     we can simply go up in the tree until the root and get all the patterns who are suffixes
+*     of the given node.
+*
+*     Note that if we have the longest match, than all the other matches are exactly its suffixes.
+*
+* We define a pointer to a patterns tree node as pattern_id_t, and that the id of the pattern that
+* the Multi-Pattern searching alogirithms get.
+*
+* When a Multi-Pattern Searching Algorithm return the id of the longest pattern matching, we can find
+* all other patterns (in the way stated above).
+*
+* Note that since we are not keeping the actual patterns in the tree, after the tree construction there
+* is no way to find the pattern from its node (actually, we do know the file and line numbers of the pattern
+* but its take time to read a specific line in a file, and doing it on all patterns can take a LOT of time).
+* So, in order to give the pattern searching algorithms all the patterns with their right IDs, we give
+* it to them IN CONSTRUCTION TIME (the patterns tree construction function should be given a callback function,
+* to add the patterns with it).
+*/
 #include "PatternsTree.h"
 #include "conf.h"
 
@@ -8,7 +41,7 @@ void print_patterns_tree(PatternsTree* tree);
 
 /**
 * We build the patterns tree in two stages:
-* 1. Build a full pattern tree (where every node have a list of its childs, with the suitable suffix)
+* 1. Build a full pattern tree (where every node have a list of its childs, with the suitable prefix)
 * 2. Convert the full tree to regular tree (where every node have only his parent)
 */
 
@@ -391,7 +424,6 @@ PatternsTree* patterns_tree_build(Conf* conf,
                                   void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
 	FullPatternsTree* full_tree = fpt_build(conf);
 	PatternsTree* tree = convert_fpt_to_patterns_tree(full_tree, obj, add_pattern_func);
-	print_fpt(full_tree);
 	fpt_free(full_tree);
 }
 

@@ -1,3 +1,13 @@
+/**
+* Multi-Pattern Breslauer-Galil Algorithm Implementation.
+*
+* This implementation is basically repeating the Single-Pattern Breslauer-Galil on every pattern.
+*
+* We save for every pattern its id and its Breslauer-Galil Pattern-Matching object, 
+* and when given a character from the stream, we simply give that character to the
+* Breslauer-Galil objects of all the patterns, and return the id of the longest pattern
+* whose Breslauer-Galil object returned true.
+*/
 #include "mpbg.h"
 
 /**

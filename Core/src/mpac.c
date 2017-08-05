@@ -53,12 +53,16 @@ typedef struct queue {
 *     INNER FUNCTIONS
 ******************************************************************************/
 
+//=========== FOR TESTING ===================
+static void _print_states(AC* ac);
+//=========== FOR TESTING ===================
+
 /**
 * Create new queue
 *
 * @return    A new dynamically allocated queue
 */
-Queue* queue_create() {
+static Queue* queue_create() {
 	Queue *q = (Queue*)malloc(sizeof(Queue));
 	memset(q, 0, sizeof(Queue));
 	return q;
@@ -70,7 +74,7 @@ Queue* queue_create() {
 * @param q      The queue
 * @param state  The state to add
 */
-void queue_add(Queue* q, size_t state) {
+static void queue_add(Queue* q, size_t state) {
 	QNode *node = (QNode*)malloc(sizeof(QNode));
 	node->next = NULL;
 	node->state = state;
@@ -89,7 +93,7 @@ void queue_add(Queue* q, size_t state) {
 * 
 * @return    The first state was on the queue
 */
-size_t queue_pop(Queue* q) {
+static size_t queue_pop(Queue* q) {
 	if (!q->head) return 0;
 	QNode* temp = q->head;
 	size_t state = temp->state;
@@ -122,7 +126,7 @@ static inline int queue_not_empty(Queue* q) {
 *
 * @return       The next available position in the states array
 */
-size_t convert_tree_to_states(TreeNode* node, State* states, size_t from) {
+static size_t convert_tree_to_states(TreeNode* node, State* states, size_t from) {
 	size_t i, pos = from++;
 	TreeNode* cur;
 	states[pos].id = node->id;
@@ -145,7 +149,7 @@ size_t convert_tree_to_states(TreeNode* node, State* states, size_t from) {
 * @param parent     The position of the state's parent
 * @param c          The character to the node from its parent
 */
-void add_failure_to_state(State* states, size_t parent, unsigned char c) {
+static void add_failure_to_state(State* states, size_t parent, size_t c) {
 	size_t fs = states[parent].failure_state;
 	size_t state = states[parent].children[c];
 	while (!states[fs].children[c] && fs) {
@@ -163,10 +167,9 @@ void add_failure_to_state(State* states, size_t parent, unsigned char c) {
 *
 * @param states    The array of states
 */
-void add_failure_links(State* states) {
+static void add_failure_links(State* states) {
 	Queue* q = queue_create();
 	size_t i, curState;
-	queue_add(q, 0);
 	// add the first level to the queue, and put their failure link to 0
 	states[0].failure_state = 0;
 	for(i = 0; i < 256; ++i) {
@@ -180,7 +183,7 @@ void add_failure_links(State* states) {
 		curState = queue_pop(q);
 		for (i = 0; i < 256; ++i) {
 			if (states[curState].children[i]) {
-				add_failure_to_state(states, curState, (unsigned char)i);
+				add_failure_to_state(states, curState, i);
 				queue_add(q, states[curState].children[i]);
 			}
 		}
@@ -192,7 +195,7 @@ void add_failure_links(State* states) {
 *
 * @param root    The root of the tree
 */
-void free_tree(TreeNode *root) {
+static void free_tree(TreeNode *root) {
 	size_t i;
 	for (i = 0; i < 256; ++i) {
 		if (root->children[i]) free_tree(root->children[i]);
@@ -234,14 +237,14 @@ void ac_add_pattern(void* obj, char* pat, size_t len, pattern_id_t id) {
 	AC *ac = (AC*)obj;
 	TreeNode *cur = ac->root, *next;
 	size_t i = 0;
-	while (i < len && cur->children[pat[i]]) {
-		cur = cur->children[pat[i++]];
+	while (i < len && cur->children[(unsigned char)pat[i]]) {
+		cur = cur->children[(unsigned)pat[i++]];
 	}
 	for (; i < len; ++i) {
 		next = (TreeNode*)malloc(sizeof(TreeNode));
 		memset(next, 0, sizeof(TreeNode));
 		next->id = null_pattern_id;
-		cur->children[pat[i]] = next;
+		cur->children[(unsigned char)pat[i]] = next;
 		cur = next;
 		ac->n_states++;
 	}
@@ -281,11 +284,13 @@ pattern_id_t ac_read_char(void* obj, char c) {
 	AC *ac = (AC*)obj;
 	size_t current_state = ac->current_state;
 	State* states = ac->states;
-	while (!states[current_state].children[c] && current_state) {
+	// the index in children array should be converted, since char is signed type
+	unsigned char uc = (unsigned char)c;
+	while (!states[current_state].children[uc] && current_state) {
 		current_state = states[current_state].failure_state;
 	}
-	if (states[current_state].children[c]) {
-		ac->current_state = states[current_state].children[c];
+	if (states[current_state].children[uc]) {
+		ac->current_state = states[current_state].children[uc];
 		return states[ac->current_state].id;
 	} else {
 		ac->current_state = current_state;
@@ -339,4 +344,24 @@ void mps_ac_register() {
 	mps_table[MPS_AC].total_mem = ac_total_mem;
 	mps_table[MPS_AC].reset = ac_reset;
 	mps_table[MPS_AC].free = ac_free;
+}
+
+//=========================================================
+//================ FOR TESTING ============================
+//=========================================================
+
+static void _print_states(AC* ac) {
+	State* state;
+	printf("printing ac states, number of states = %lu\n", ac->n_states);
+	for (size_t i = 0; i < ac->n_states; ++i) {
+		state = &ac->states[i];
+		printf("state %lu, id = %p, failure state = %lu\n", i, state->id, state->failure_state);
+		for (int j = 0; j < 256; ++j) {
+			if (state->children[j]) {
+				printf("  ");
+				print_binary_str((char*)&j, 1);
+				printf(", state = %lu\n", state->children[j]);
+			}
+		}
+	}
 }
