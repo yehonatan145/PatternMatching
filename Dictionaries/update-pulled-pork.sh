@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ## this script update the rules in this directory using pulledpork and regenerate the patterns-list files from it
+## this script should get an oinkcode as a first and only parameter (see https://www.snort.org/oinkcodes)
 
 # snort rules file extension
 snort_rules_ext='rules'
@@ -8,7 +9,7 @@ snort_rules_ext='rules'
 patterns_ext='dict'
 
 # variables for the online rules updated
-oinkcode='82f3cb8a183c29ef718df48136b1723e08caa894'
+oinkcode="$1"
 snort_url="https://www.snort.org/rules/|snortrules-snapshot.tar.gz|$oinkcode"
 snort_file_name='snort'
 et_url='https://rules.emergingthreats.net/|emerging.rules.tar.gz|open-nogpl'
