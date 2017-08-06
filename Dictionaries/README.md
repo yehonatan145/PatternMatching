@@ -12,5 +12,5 @@ The file extension for dictionary files is ".dict"
 These files are created by pulledpork.pl program in this directory (for more information see https://github.com/shirkdog/pulledpork).
 
 The bash script to update this files is update-pulled-pork.sh and its usage is
-./update-pulled-pork.sh <oinkcode>
+./update-pulled-pork.sh < oinkcode >
 (for more information on snort oinkcode see https://www.snort.org/oinkcodes)
