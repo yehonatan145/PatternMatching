@@ -238,7 +238,7 @@ void ac_add_pattern(void* obj, char* pat, size_t len, pattern_id_t id) {
 	TreeNode *cur = ac->root, *next;
 	size_t i = 0;
 	while (i < len && cur->children[(unsigned char)pat[i]]) {
-		cur = cur->children[(unsigned)pat[i++]];
+		cur = cur->children[(unsigned char)pat[i++]];
 	}
 	for (; i < len; ++i) {
 		next = (TreeNode*)malloc(sizeof(TreeNode));

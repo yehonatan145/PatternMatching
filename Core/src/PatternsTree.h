@@ -17,8 +17,8 @@
 struct _Conf;
 
 typedef struct {
-	int file_number;
-	int line_number;
+	size_t file_number;
+	size_t line_number;
 } PatternInternalID;
 
 //====================== Fpt = Full Patterns Tree ======================
@@ -119,6 +119,12 @@ void patterns_tree_free(PatternsTree* tree);
 
 // return whether the first pattern is a suffix of the second
 int is_pattern_suffix(pattern_id_t first, pattern_id_t second);
+
+static inline void print_pattern_id(pattern_id_t id) {
+	PatternsTreeNode* ptn = (PatternsTreeNode*)id;
+	PatternInternalID* iid = &ptn->pattern_id;
+	printf("file number: %lu, line number: %lu", iid->file_number, iid->line_number);
+}
 
 
 

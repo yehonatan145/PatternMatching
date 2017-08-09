@@ -141,7 +141,6 @@ size_t _bgps_find_period_continue(char* pattern, size_t all, size_t n, size_t pe
 void _bgps_init_kmp(BGStruct* bg, char* pattern) {
 	int stage_loglogn_period = kmp_get_period(pattern, 1 << bg->loglogn);
 	int last_period_continued = _bgps_find_period_continue(pattern, bg->n, 1 << bg->loglogn, stage_loglogn_period);
-	//printf("stage loglogn period is %d, and the last period continue is %d\n", stage_loglogn_period, last_period_continued);
 	bg->first_stage = bg_log2(last_period_continued, 0);
 	bg->kmp_period = kmp_new(pattern, stage_loglogn_period);
 	bg->n_kmp_period = (1 << bg->first_stage) / stage_loglogn_period;
@@ -333,7 +332,6 @@ int _bgps_add_vo(VOLinearProgression* vos, pos_t pos, fingerprint_t fp, FieldVal
 *               1 - the VOs is now empty
 */
 int _bgps_remove_first_vo(VOLinearProgression* vos, field_t p) {
-	//printf("remove vo pos = %llu, n = %d\n", vos->first.pos, vos->n);
 	if (vos->n == 0) {
 		return 1;
 	} else if (vos->n == 1) {
@@ -368,7 +366,6 @@ int _bgps_remove_first_vo(VOLinearProgression* vos, field_t p) {
 *               Otherwise return 1.
 */
 int _bgps_vo_stage_upgrade(BGStruct* bg, size_t stage_num) {
-	//printf("upgrade first vo of stage %d\n", stage_num);
 	VOLinearProgression* vos = &bg->vos[stage_num];
 	VOLinearProgression* next_vos = &bg->vos[stage_num + 1];
 	if (vos->n == 0) {
@@ -377,7 +374,6 @@ int _bgps_vo_stage_upgrade(BGStruct* bg, size_t stage_num) {
 	size_t real_next_stage = bg->first_stage + stage_num + 1;
 	// end_pos is the position of the last character of the pattern of next stage starting at the first VO.
 	pos_t end_pos = vos->first.pos + (real_next_stage == bg->logn ? bg->n : 1 << real_next_stage);
-	//printf("end_pos = %llu, current_pos = %llu\n", end_pos, bg->current_pos);
 	if (bg->current_pos < end_pos || bg->current_pos >= end_pos + bg->logn) {
 		return 1; // We not yet need to upgrade the first VO
 	}
@@ -386,12 +382,12 @@ int _bgps_vo_stage_upgrade(BGStruct* bg, size_t stage_num) {
 	if (check_fp == bg->fps[stage_num]) {
 		int resp = _bgps_add_vo(next_vos, vos->first.pos, vos->first.fp, &vos->first.r, bg->p);
 		if (!resp) {
-			LOG("Fingerprint Collision, possibly match on %llu\n", vos->first.pos + bg->n);
-			_bgps_remove_first_vo(vos, bg->p);
+			//LOG("Fingerprint Collision, possibly match on %llu\n", vos->first.pos + bg->n);
+			//_bgps_remove_first_vo(vos, bg->p);
+			vos->n = 0;
 			return 0;
 		} else if (resp == 2) {
 			// check if we need to turn on flags:
-			//printf("checking for flags change: stage number is %d\n", stage_num);
 			if (stage_num == N_STAGES(bg) - 2 && bg->flags & BG_NEED_BEFORE_LAST_STAGE_FLAG) {
 				bg->flags |= BG_NEED_BEFORE_LAST_STAGE_FLAG;
 			} else if (stage_num == N_STAGES(bg) - 1) {
@@ -448,7 +444,6 @@ int _bgps_check_last_stages(BGStruct* bg) {
 * @return         Whether the first stage has a match
 */
 int _bgps_check_first_stage(BGStruct* bg, char c) {
-	//printf("check first stage\n");
 	// In any case, we need to give c to kmp_period (and kmp_remaining if exist)
 	int kmp_period_match = kmp_read_char(bg->kmp_period, c);
 	size_t period_len = kmp_get_pattern_len(bg->kmp_period);
@@ -473,13 +468,11 @@ int _bgps_check_first_stage(BGStruct* bg, char c) {
 			bg->current_n_kmp_period = 1;
 		}
 		bg->last_kmp_period_match_pos = bg->current_pos;
-		//printf("kmp -- period match, now number of matches = %d\n", bg->current_n_kmp_period);
 	}
 	// Now, bg->current_n_kmp_period is update to this char
 	int kmp_remaining_match;
 	if (bg->kmp_remaining) {
 		kmp_remaining_match = kmp_read_char(bg->kmp_remaining, c);
-		//if (kmp_remaining_match) printf("kmp -- remaining match\n");
 	} else {
 		kmp_remaining_match = 1; // If there is no remaining, we treat it as 'found'
 	}
@@ -487,7 +480,6 @@ int _bgps_check_first_stage(BGStruct* bg, char c) {
 	if (kmp_remaining_match && bg->current_n_kmp_period == bg->n_kmp_period) {
 		// If there is a full match of the first stage
 		// (we have all periods and remaining OR we have all periods and no remaining)
-		//printf("full kmp match!\n");
 		bg->current_n_kmp_period--;
 		return 1;
 	}
@@ -520,9 +512,9 @@ int bg_read_char(BGStruct* bg, char c) {
 		int resp = _bgps_add_vo(&bg->vos[0], vo_pos, vo_fp, &vo_r, bg->p);
 		//printf("response of add vo (first stage) is %d\n", resp);
 		if (!resp) {
-			LOG("Fingerprint Collision, possibly match from %llu to %llu\n",
-			    bg->vos[0].first.pos + bg->n,
-			    vo_pos + bg->n);
+			//LOG("Fingerprint Collision, possibly match from %llu to %llu\n",
+			//    bg->vos[0].first.pos + bg->n,
+			//    vo_pos + bg->n);
 		} else if (resp == 2) {
 			// if this stage is the last one / before last one
 			if (N_STAGES(bg) == 1) {
@@ -536,8 +528,13 @@ int bg_read_char(BGStruct* bg, char c) {
 	if (_bgps_check_last_stages(bg)) {
 		ret = 1;
 	}
-	_bgps_vo_stage_upgrade(bg, bg->current_stage);
-	MOD_DEC(bg->current_stage, bg->flags & BG_NEED_BEFORE_LAST_STAGE_FLAG ? N_STAGES(bg) - 2 : N_STAGES(bg) - 1);
+	if (N_STAGES(bg) == 1 || N_STAGES(bg) == 2 && bg->flags & BG_NEED_BEFORE_LAST_STAGE_FLAG) {
+		// in this case, checking the last stages every character is enough, 
+		// so we don't need to iterate over the different levels of the vos
+	} else {
+		_bgps_vo_stage_upgrade(bg, bg->current_stage);
+		MOD_DEC(bg->current_stage, bg->flags & BG_NEED_BEFORE_LAST_STAGE_FLAG ? N_STAGES(bg) - 2 : N_STAGES(bg) - 1);
+	}
 	field_mul(&bg->current_r, &bg->current_r, &bg->r, bg->p);
 	bg->current_pos++;
 	return ret;

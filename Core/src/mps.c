@@ -7,6 +7,7 @@
 #include "mps.h"
 #include "PatternsTree.h"
 #include "conf.h"
+#include "util.h"
 
 // include the algorithms
 #include "mpbg.h"

@@ -16,6 +16,7 @@
 */
 #define _CRT_SECURE_NO_WARNINGS
 #include "kmprt.h"
+#include "util.h"
 
 /**
 * Create the failure table for the failure function.
@@ -55,6 +56,10 @@ KMPRealTime* kmp_new(char* pattern, size_t n) {
 	memset(kmp, 0, sizeof(KMPRealTime));
 	kmp->n = n;
 	kmp->pattern = (char*) malloc (n * sizeof(char));
+	if (kmp->pattern == NULL) {
+		perror("failed to allocate memory for kmp pattern\n");
+		FatalExit();
+	}
 	memcpy(kmp->pattern, pattern, n);
 	kmp->buffer = (char*) malloc (n * sizeof(char));
 	kmp->failure_table = kmp_create_failure_table(pattern, n);
@@ -80,6 +85,7 @@ size_t kmp_get_total_mem(KMPRealTime* kmp) {
 * @param kmp     The kmp struct to reset
 */
 void kmp_reset(KMPRealTime* kmp) {
+	if (!kmp) return;
 	kmp->offset = 0;
 	kmp->buf_start = kmp->buf_end = 0;
 	kmp->flags &= ~KMP_HAVE_BUFFER_FLAG;
@@ -192,13 +198,13 @@ int _kmp_read_char(KMPRealTime* kmp, char c) {
 	if (kmp->pattern[kmp->offset] == c) {
 		kmp->offset++;
 		if (kmp->offset == kmp->n) {
-			kmp->offset = kmp->failure_table[kmp->n]; // In the n-th place, there is the next offset after successful match
+			// In the n-th place, there is the next offset after successful match
+			kmp->offset = kmp->failure_table[kmp->n];
 			return 1;
 		}
 	} else if (kmp->offset == 0) {
 		return 0;
 	} else {
-		//printf("mismatch, offset is %d\n", kmp->offset);
 		int i;
 		for (i = 0; i < 2; ++i) {
 			if (_kmp_move_failure_function(kmp, c)) {
@@ -231,7 +237,7 @@ int _kmp_read_char(KMPRealTime* kmp, char c) {
 int kmp_read_char(KMPRealTime* kmp, char c) {
 	int i;
 	if (kmp->flags & KMP_LOOP_FAIL_FLAG) { // Have failure function moves to do
-		//printf("backtracing - offset: %d, flags: %d\n", kmp->offset, kmp->flags);
+		//printf("backtracing - offset: %lu, flags: %d\n", kmp->offset, kmp->flags);
 		_kmp_add_char_to_buffer(kmp, c);
 		for (i = 0; i < 2; ++i) {
 			if (_kmp_move_failure_function(kmp, kmp->buffer[kmp->buf_start])) {
@@ -242,7 +248,7 @@ int kmp_read_char(KMPRealTime* kmp, char c) {
 		}
 		return 0;
 	} else if (kmp->flags & KMP_HAVE_BUFFER_FLAG) { // Have chars waiting in buffer
-		//printf("have buffer of length %d - offset: %d, flags: %d\n", kmp->buf_end - kmp->buf_start + 1, kmp->offset, kmp->flags);
+		//printf("buffer length %lu - offset: %lu, flags: %d\n", kmp->buf_end-kmp->buf_start+1, kmp->offset, kmp->flags);
 		_kmp_add_char_to_buffer(kmp, c);
 		for (i = 0; i < 2; ++i) {
 			c = _kmp_pop_buffer(kmp);
@@ -252,10 +258,11 @@ int kmp_read_char(KMPRealTime* kmp, char c) {
 				return 1;
 			}
 		}
-		//printf("after working on buffer, offset: %d, flags: %d\n", kmp->offset, kmp->flags);
+		//printf("after working on buffer, offset: %lu, flags: %d\n", kmp->offset, kmp->flags);
 		return 0;
 	} else {
-		 return _kmp_read_char(kmp, c);
+		//printf("reading char regular\n");
+		return _kmp_read_char(kmp, c);
 	}
 }
 

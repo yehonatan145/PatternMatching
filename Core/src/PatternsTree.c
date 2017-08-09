@@ -238,12 +238,12 @@ FullPatternsTree* fpt_new() {
 *
 * @return               The longest patterns found
 */
-size_t fpt_fill_with_dict_file(FullPatternsTree* tree, int file_index, char* filename) {
+size_t fpt_fill_with_dict_file(FullPatternsTree* tree, size_t file_index, char* filename) {
 	FILE* fp;
 	char* line = NULL;
 	char* pat = NULL;
 	size_t len, pat_len, max_pat_len = 0;
-	int line_num = 0;
+	size_t line_num = 0;
 	ssize_t read;
 	PatternInternalID id;
 
@@ -498,7 +498,7 @@ void print_patterns_tree_node(PatternsTreeNode* node, int indent) {
 	PatternsTreeEdge* edge;
 	int i;
 	for (i = 0; i < indent; ++i) printf(" ");
-	printf(":file = %d:line = %d:\n", node->pattern_id.file_number, node->pattern_id.line_number);
+	printf(":file = %lu:line = %lu:\n", node->pattern_id.file_number, node->pattern_id.line_number);
 	for (edge = node->edge_list; edge; edge = edge->next) {
 		print_patterns_tree_node(edge->node, indent + 2);
 	}

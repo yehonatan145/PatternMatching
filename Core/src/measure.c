@@ -161,6 +161,7 @@ void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats, Conf
 
 	memset(stats, 0, sizeof(InstanceStats));
 	init_perf_events(fds, ids);
+	printf("Measuring algorithm %s\n\n", mps_table[inst->algo].name);
 
 	// start the measuring
 	ioctl(fds[0], PERF_EVENT_IOC_RESET, PERF_IOC_FLAG_GROUP);
@@ -178,6 +179,7 @@ void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats, Conf
 		fd = open(stream_files[i], O_RDONLY);
 		do {
 			len_read = read(fd, stream_buffer, STREAM_BUFFER_SIZE);
+			printf("before measuring %lu bytes\n", len_read);
 
 			// perform the alogithm on the stream buffer and measure it
 			ioctl(fds[0], PERF_EVENT_IOC_ENABLE, PERF_IOC_FLAG_GROUP);
@@ -185,6 +187,7 @@ void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats, Conf
 				algo_results[j] = read_char_func(obj, stream_buffer[j]);
 			}
 			ioctl(fds[0], PERF_EVENT_IOC_DISABLE, PERF_IOC_FLAG_GROUP);
+			printf("after measuring %lu bytes\n", len_read);
 
 			// perform the raliable alogirthm to discover real results, and measure success rate
 			for (j = 0; j < len_read; ++j) {
@@ -194,6 +197,8 @@ void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stats, Conf
 		} while (len_read == STREAM_BUFFER_SIZE);
 		close(fd);
 	}
+
+	printf("After measuring algorithm %s\n\n", mps_table[inst->algo].name);
 	
 	// read the results
 	read(fds[0], perf_buf, PERF_BUF_SIZE);
