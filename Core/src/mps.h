@@ -1,7 +1,18 @@
 #ifndef MPS_H
 #define MPS_H
 
+/******************************************************************************
+*		INCLUDES
+******************************************************************************/
+
+
 #include "PatternsTree.h"
+
+
+/******************************************************************************
+*		DEFINITIONS
+******************************************************************************/
+
 
 struct _Conf;
 
@@ -76,13 +87,20 @@ typedef struct {
 * (the init_mps function is currently responsible for creating the instances according to the algorithms)
 */
 typedef struct {
-	void* obj;
-	int algo;
+	void *obj;
+	int   algo;
 } MpsInstance;
 
 extern MpsElem mps_table[MPS_SIZE]; // definition in .c file
 
+
+/******************************************************************************
+*		API FUNCTIONS
+******************************************************************************/
+
+
 void mps_table_setup();
 void init_mps(struct _Conf* conf);
+
 
 #endif /* MPS_H */

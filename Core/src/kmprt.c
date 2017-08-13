@@ -14,9 +14,146 @@
 * note: the kmp algorithm also used to find the period of a pattern, as in the next formula:
 * the period length of P[1..m] = m - failure_function[m], when the failure function was built on P.
 */
-#define _CRT_SECURE_NO_WARNINGS
+
+
+/******************************************************************************************************
+*		INCLUDES
+******************************************************************************************************/
+
+
 #include "kmprt.h"
 #include "util.h"
+
+
+/******************************************************************************************************
+*		INNER FUNCTIONS
+******************************************************************************************************/
+
+
+/**
+* Move to the next step of the failure function (and update the offset accordingly).
+*
+* If succeed (return true), it change the kmp to the state of right AFTER the char was called
+* (i.e. ready for the char that comes after {@param c})
+*
+* @param kmp    The kmp struct
+* @param c      The char that was mismatched that started the failure function loop
+*
+* @return       True if the failure function finished (we got the first position at which this character matches)
+*               False if not
+*/
+static int _kmp_move_failure_function(KMPRealTime* kmp, char c) {
+	kmp->offset = kmp->failure_table[kmp->offset];
+	if (kmp->pattern[kmp->offset] == c) {
+		kmp->offset++;
+		return 1;
+	} else if (kmp->offset == 0) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+/**
+* Add character to the buffer at the end.
+*
+* @param kmp    The kmp struct
+* @param c      The character to add to the buffer
+*/
+static void _kmp_add_char_to_buffer(KMPRealTime* kmp, char c) {
+	if (kmp->flags & KMP_HAVE_BUFFER_FLAG) {
+		MOD_INC(kmp->buf_end, kmp->n);
+		kmp->buffer[kmp->buf_end] = c;
+	} else {
+		kmp->buf_start = kmp->buf_end = 0;
+		kmp->buffer[0] = c;
+		kmp->flags |= KMP_HAVE_BUFFER_FLAG;
+	}
+}
+
+/**
+* Add character to the buffer at the start.
+*
+* @param kmp    The kmp struct
+* @param c      The character to add tp the buffer
+*/
+static void _kmp_push_char_to_buffer(KMPRealTime* kmp, char c) {
+	if (kmp->flags & KMP_HAVE_BUFFER_FLAG) {
+		MOD_DEC(kmp->buf_start, kmp->n);
+		kmp->buffer[kmp->buf_start] = c;
+	}
+	else {
+		kmp->buf_start = kmp->buf_end = 0;
+		kmp->buffer[0] = c;
+		kmp->flags |= KMP_HAVE_BUFFER_FLAG;
+	}
+}
+
+/**
+* Pop char from buffer.
+*
+* @param kmp    The kmp struct
+*
+* @return       The first char in the buffer
+*/
+static char _kmp_pop_buffer(KMPRealTime* kmp) {
+	char c = kmp->buffer[kmp->buf_start];
+	if (kmp->buf_start == kmp->buf_end) {
+		kmp->flags &= ~KMP_HAVE_BUFFER_FLAG;
+	}
+	MOD_INC(kmp->buf_start, kmp->n);
+	return c;
+}
+
+/**
+* Simulates the kmp algorithm to read char from stream.
+* If it needs to loop through too many failure function moves: 
+*  -Set KMP_LOOP_FAIL_FLAG
+*  -Put the char in the start of the buffer for later use (if the buffer is empty)
+*  -And return 0.
+*
+* @param kmp    The kmp struct
+* @param c      The char
+*
+* @return       Whether there is a match
+*/
+static int _kmp_read_char(KMPRealTime* kmp, char c) {
+	if (kmp->pattern[kmp->offset] == c) {
+		kmp->offset++;
+		if (kmp->offset == kmp->n) {
+			// In the n-th place, there is the next offset after successful match
+			kmp->offset = kmp->failure_table[kmp->n];
+			return 1;
+		}
+	} else if (kmp->offset == 0) {
+		return 0;
+	} else {
+		int i;
+		for (i = 0; i < 2; ++i) {
+			if (_kmp_move_failure_function(kmp, c)) {
+				return 0;
+			}
+		}
+		//printf("keep looping, offset is %d, flags is %d\n", kmp->offset, kmp->flags);
+		// If got here, there is need in looping through the failure function
+		kmp->flags |= KMP_LOOP_FAIL_FLAG;
+		/*
+		* If the buffer is empty then 'c' is the stream current character, so we need to enter it
+		* to the buffer for later use.
+		* If the buffer is not empty then we popped the first char in the buffer so now we need to enter
+		* it back for the loop through the failure function.
+		* Either way, we need to enter the char back to the start of the buffer.
+		*/
+		_kmp_push_char_to_buffer(kmp, c);
+	}
+	return 0;
+}
+
+
+/******************************************************************************************************
+*		API FUNCTIONS
+******************************************************************************************************/
+
 
 /**
 * Create the failure table for the failure function.
@@ -108,125 +245,6 @@ size_t kmp_get_period(char* pattern, size_t n) {
 }
 
 /**
-* Move to the next step of the failure function (and update the offset accordingly).
-*
-* If succeed (return true), it change the kmp to the state of right AFTER the char was called
-* (i.e. ready for the char that comes after {@param c})
-*
-* @param kmp    The kmp struct
-* @param c      The char that was mismatched that started the failure function loop
-*
-* @return       True if the failure function finished (we got the first position at which this character matches)
-*               False if not
-*/
-int _kmp_move_failure_function(KMPRealTime* kmp, char c) {
-	kmp->offset = kmp->failure_table[kmp->offset];
-	if (kmp->pattern[kmp->offset] == c) {
-		kmp->offset++;
-		return 1;
-	} else if (kmp->offset == 0) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
-/**
-* Add character to the buffer at the end.
-*
-* @param kmp    The kmp struct
-* @param c      The character to add to the buffer
-*/
-void _kmp_add_char_to_buffer(KMPRealTime* kmp, char c) {
-	if (kmp->flags & KMP_HAVE_BUFFER_FLAG) {
-		MOD_INC(kmp->buf_end, kmp->n);
-		kmp->buffer[kmp->buf_end] = c;
-	} else {
-		kmp->buf_start = kmp->buf_end = 0;
-		kmp->buffer[0] = c;
-		kmp->flags |= KMP_HAVE_BUFFER_FLAG;
-	}
-}
-
-/**
-* Add character to the buffer at the start.
-*
-* @param kmp    The kmp struct
-* @param c      The character to add tp the buffer
-*/
-void _kmp_push_char_to_buffer(KMPRealTime* kmp, char c) {
-	if (kmp->flags & KMP_HAVE_BUFFER_FLAG) {
-		MOD_DEC(kmp->buf_start, kmp->n);
-		kmp->buffer[kmp->buf_start] = c;
-	}
-	else {
-		kmp->buf_start = kmp->buf_end = 0;
-		kmp->buffer[0] = c;
-		kmp->flags |= KMP_HAVE_BUFFER_FLAG;
-	}
-}
-
-/**
-* Pop char from buffer.
-*
-* @param kmp    The kmp struct
-*
-* @return       The first char in the buffer
-*/
-char _kmp_pop_buffer(KMPRealTime* kmp) {
-	char c = kmp->buffer[kmp->buf_start];
-	if (kmp->buf_start == kmp->buf_end) {
-		kmp->flags &= ~KMP_HAVE_BUFFER_FLAG;
-	}
-	MOD_INC(kmp->buf_start, kmp->n);
-	return c;
-}
-
-/**
-* Simulates the kmp algorithm to read char from stream.
-* If it needs to loop through too many failure function moves: 
-*  -Set KMP_LOOP_FAIL_FLAG
-*  -Put the char in the start of the buffer for later use (if the buffer is empty)
-*  -And return 0.
-*
-* @param kmp    The kmp struct
-* @param c      The char
-*
-* @return       Whether there is a match
-*/
-int _kmp_read_char(KMPRealTime* kmp, char c) {
-	if (kmp->pattern[kmp->offset] == c) {
-		kmp->offset++;
-		if (kmp->offset == kmp->n) {
-			// In the n-th place, there is the next offset after successful match
-			kmp->offset = kmp->failure_table[kmp->n];
-			return 1;
-		}
-	} else if (kmp->offset == 0) {
-		return 0;
-	} else {
-		int i;
-		for (i = 0; i < 2; ++i) {
-			if (_kmp_move_failure_function(kmp, c)) {
-				return 0;
-			}
-		}
-		//printf("keep looping, offset is %d, flags is %d\n", kmp->offset, kmp->flags);
-		// If got here, there is need in looping through the failure function
-		kmp->flags |= KMP_LOOP_FAIL_FLAG;
-		/*
-		* If the buffer is empty then 'c' is the stream current character, so we need to enter it
-		* to the buffer for later use.
-		* If the buffer is not empty then we popped the first char in the buffer so now we need to enter
-		* it back for the loop through the failure function.
-		* Either way, we need to enter the char back to the start of the buffer.
-		*/
-		_kmp_push_char_to_buffer(kmp, c);
-	}
-	return 0;
-}
-
-/**
 * Read char from stream and return whether we have a match.
 *
 * @param kmp    The KMPRealTime that used for the pattern we search
@@ -278,10 +296,9 @@ void kmp_free(KMPRealTime* kmp) {
 	free(kmp);
 }
 
-
-
-
+// ========================================================================
 // ===================     FOR TESTING     ================================
+// ========================================================================
 
 /*
 int main() {

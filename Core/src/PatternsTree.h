@@ -1,6 +1,11 @@
-
 #ifndef PATTERNS_TREE_H
 #define PATTERNS_TREE_H
+
+
+/******************************************************************************
+*		INCLUDES
+******************************************************************************/
+
 
 #define _GNU_SOURCE
 #include "parser.h"
@@ -10,9 +15,10 @@
 #include <errno.h>
 
 
-/**************************************************************************************
-*         D A T A     S T R U C T U R E S
-**************************************************************************************/
+/******************************************************************************
+*		DEFINITIONS
+******************************************************************************/
+
 
 struct _Conf;
 
@@ -100,16 +106,10 @@ typedef PatternsTreeNode* pattern_id_t;
 #define null_pattern_id NULL
 
 
-/**************************************************************************************
-*         F U N C T I O N S
-**************************************************************************************/
+/******************************************************************************
+*		API FUNCTIONS
+******************************************************************************/
 
-FullPatternsTree* fpt_build(struct _Conf* conf);
-void fpt_free(FullPatternsTree* full_tree);
-
-PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree *full_tree,
-                                           void *obj,
-                                           void (*add_pattern_func)(void*, char*, size_t, pattern_id_t));
 
 PatternsTree* patterns_tree_build(struct _Conf* conf,
                                   void* obj,
@@ -120,14 +120,21 @@ void patterns_tree_free(PatternsTree* tree);
 // return whether the first pattern is a suffix of the second
 int is_pattern_suffix(pattern_id_t first, pattern_id_t second);
 
+
+/******************************************************************************
+*		INLINE FUNCTIONS
+******************************************************************************/
+
+
 static inline void print_pattern_id(pattern_id_t id) {
+	if (id == NULL) {
+		printf("<no pattern>");
+		return;
+	}
 	PatternsTreeNode* ptn = (PatternsTreeNode*)id;
 	PatternInternalID* iid = &ptn->pattern_id;
 	printf("file number: %lu, line number: %lu", iid->file_number, iid->line_number);
 }
-
-
-
 
 
 #endif

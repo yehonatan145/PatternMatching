@@ -5,32 +5,32 @@ Real-Time version of the KMP algorithm (by Galil) that is also used to find peri
 #define KMPRT_H
 
 /******************************************************************************************************
-*       INCLUDES:
+*		INCLUDES
 ******************************************************************************************************/
 
 #include "Fingerprint.h"
 
 /******************************************************************************************************
-*		DEFINITIONS:
+*		DEFINITIONS
 ******************************************************************************************************/
 
 #define KMP_LOOP_FAIL_FLAG 1 // there is still need to loop through failure function
 #define KMP_HAVE_BUFFER_FLAG 2 // flag for having chars in buffer
 
 typedef struct {
-    size_t   n; // the pattern's length
-    char    *pattern; // the pattern itself
-    size_t  *failure_table; // the failure function table (size n + 1)
-    size_t   offset; // how much characters from start of pattern until know is matched (what char are we)
-    char    *buffer; // buffer for saving characters that were received during the failure-function looping
-    size_t   buf_start; // the start position of the buffer (the buffer is round robin)
-    size_t   buf_end; // the end position of the buffer (the buffer is round robin)
-    int      flags;
+	size_t   n; // the pattern's length
+	char    *pattern; // the pattern itself
+	size_t  *failure_table; // the failure function table (size n + 1)
+	size_t   offset; // how much characters from start of pattern until know is matched (what char are we)
+	char    *buffer; // buffer for saving characters that were received during the failure-function looping
+	size_t   buf_start; // the start position of the buffer (the buffer is round robin)
+	size_t   buf_end; // the end position of the buffer (the buffer is round robin)
+	int      flags;
 } KMPRealTime;
 
 
 /******************************************************************************************************
-*		FUNCTIONS TO EXTERN:
+*		API FUNCTIONS
 ******************************************************************************************************/
 
 /* functions for using the real-time kmp algorithm */
@@ -44,7 +44,7 @@ size_t kmp_get_period(char* pattern, size_t n);
 size_t* kmp_create_failure_table(char* pattern, size_t n);
 
 /******************************************************************************************************
-*		INLINE FUNCTIONS:
+*		INLINE FUNCTIONS
 ******************************************************************************************************/
 
 static inline size_t kmp_get_pattern_len(KMPRealTime* kmp) {

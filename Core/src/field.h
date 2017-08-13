@@ -2,8 +2,9 @@
 #define FIELD_H
 
 /******************************************************************************************************
-*		INCLUDES:
+*		INCLUDES
 ******************************************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,14 +12,14 @@
 
 
 /******************************************************************************************************
-*		DEFINITIONS:
+*		DEFINITIONS
 ******************************************************************************************************/
+
 
 #define MOD_INC(x,p) ((x) = ((x) + 1) % (p))
 #define MOD_DEC(x,p) ((x) = ((x) ? (x) - 1 : (p) - 1))
 
-// NOTE: field size must be up to sqrt(sizeof(field_t)) because we need to be able to multiply
-
+// note: field size must be up to sqrt(sizeof(field_t)) because we need to be able to multiply
 typedef unsigned long long field_t;
 
 /**
@@ -29,16 +30,20 @@ typedef struct {
 	field_t inv;
 } FieldVal;
 
+
 /******************************************************************************************************
-*		FUNCTION TO EXTERN:
+*		API FUNCTIONS
 ******************************************************************************************************/
+
 
 /* Calculate the inverse of given field value and the field size */
 field_t calculate_inverse(field_t a, field_t p);
 
+
 /******************************************************************************************************
-*		INLINES:
+*		INLINE FUNCTIONS
 ******************************************************************************************************/
+
 
 static inline void field_copy(FieldVal* dst, FieldVal* src) {
     dst->val = src->val;

@@ -11,12 +11,27 @@
 * 
 * The failure likns are anyway generated after all patterns are inside the structure,
 * So we creating the failure links only on the states array (not on the tree)
+*
+* We also generate suffix links, where suffix link of a node x is the longest proper suffix of the pattern
+* in x that is a pattern by itself, i.e. we get the suffix links by traveling on the failure links until
+* we see a node that is a pattern (have non-null id).
+*
+* After we read a character, and get to the current node, we return the id of its suffix link.
 */
+
+
+/******************************************************************************************************
+*		INCLUDES
+******************************************************************************************************/
+
+
 #include "mpac.h"
 
+
 /******************************************************************************
-*      DEFINITIONS
+*		DEFINITIONS
 ******************************************************************************/
+
 
 // A node in the Aho-Corasick tree (used before ac compilation)
 typedef struct tree_node {
@@ -28,6 +43,7 @@ typedef struct tree_node {
 typedef struct {
 	size_t children[256];
 	size_t failure_state;
+	size_t suffix_link;
 	pattern_id_t id;
 } State;
 
@@ -49,9 +65,11 @@ typedef struct queue {
 	QNode *head, *tail;
 } Queue;
 
+
 /******************************************************************************
-*     INNER FUNCTIONS
+*		INNER FUNCTIONS
 ******************************************************************************/
+
 
 //=========== FOR TESTING ===================
 static void _print_states(AC* ac);
@@ -145,6 +163,8 @@ static size_t convert_tree_to_states(TreeNode* node, State* states, size_t from)
 /**
 * Add the failure link to a state from its parent and last char
 *
+* Also add the suffix link
+*
 * @param states     The states
 * @param parent     The position of the state's parent
 * @param c          The character to the node from its parent
@@ -155,15 +175,12 @@ static void add_failure_to_state(State* states, size_t parent, size_t c) {
 	while (!states[fs].children[c] && fs) {
 		fs = states[fs].failure_state;
 	}
-	if (states[fs].children[c]) {
-		states[state].failure_state = states[fs].children[c];
-	} else { // fs is 0, and there is no child with letter c
-		states[state].failure_state = 0;
-	}
+	states[state].failure_state = states[fs].children[c];
+	states[state].suffix_link = states[state].id == null_pattern_id ? states[states[state].failure_state].suffix_link : state;
 }
 
 /**
-* Add failure links to the array of states
+* Add failure links to the array of states (also add suffix links)
 *
 * @param states    The array of states
 */
@@ -172,11 +189,13 @@ static void add_failure_links(State* states) {
 	size_t i, curState;
 	// add the first level to the queue, and put their failure link to 0
 	states[0].failure_state = 0;
+	states[0].suffix_link = 0;
 	for(i = 0; i < 256; ++i) {
 		curState = states[0].children[i];
 		if (curState) {
 			queue_add(q, curState);
 			states[curState].failure_state = 0;
+			states[curState].suffix_link = states[curState].id == null_pattern_id ? 0 : curState;
 		}
 	}
 	while (queue_not_empty(q)) {
@@ -203,9 +222,11 @@ static void free_tree(TreeNode *root) {
 	free(root);
 }
 
+
 /******************************************************************************
-*     API FUNCTIONS
+*		API FUNCTIONS
 ******************************************************************************/
+
 
 /**
 * Create new AC struct
@@ -291,11 +312,10 @@ pattern_id_t ac_read_char(void* obj, char c) {
 	}
 	if (states[current_state].children[uc]) {
 		ac->current_state = states[current_state].children[uc];
-		return states[ac->current_state].id;
 	} else {
 		ac->current_state = current_state;
-		return states[current_state].id;
 	}
+	return states[states[ac->current_state].suffix_link].id;
 }
 
 /**

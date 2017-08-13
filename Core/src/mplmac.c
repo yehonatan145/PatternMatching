@@ -4,10 +4,18 @@
 * This is basically the same file as "mpac.c" except, instead of saving the children
 * in a array of size 256, we keep a list, in which every element is a pair of (char, state)
 */
-#include "mpac.h"
+
 
 /******************************************************************************
-*      DEFINITIONS
+*		INCLUDES
+******************************************************************************/
+
+
+#include "mpac.h"
+
+
+/******************************************************************************
+*		DEFINITIONS
 ******************************************************************************/
 
 // A node in the Aho-Corasick tree (used before ac compilation)
@@ -44,6 +52,7 @@ typedef struct children_list {
 typedef struct {
 	ChildrenList children;
 	size_t failure_state;
+	size_t suffix_link;
 	pattern_id_t id;
 } State;
 
@@ -65,9 +74,11 @@ typedef struct queue {
 	QNode *head, *tail;
 } Queue;
 
+
 /******************************************************************************
-*     INNER FUNCTIONS
+*		INNER FUNCTIONS
 ******************************************************************************/
+
 
 //=========== FOR TESTING ===================
 static void _print_states(AC* ac);
@@ -230,6 +241,8 @@ static size_t convert_tree_to_states(TreeNode* node, State* states, size_t from)
 /**
 * Add the failure link to a state from its parent and last char
 *
+* Also add the suffix link
+*
 * @param states     The states
 * @param parent     The position of the parent
 * @param c          The character to the node from its parent
@@ -237,16 +250,17 @@ static size_t convert_tree_to_states(TreeNode* node, State* states, size_t from)
 */
 static void add_failure_to_state(State* states, size_t parent, char c, size_t child) {
 	size_t fs = states[parent].failure_state;
-	size_t fs_child = find_child_from_index(states, fs, (char)c);
+	size_t fs_child = find_child_from_index(states, fs, c);
 	while (fs && !fs_child) {
 		fs = states[fs].failure_state;
-		fs_child = find_child_from_index(states, fs, (char)c);
+		fs_child = find_child_from_index(states, fs, c);
 	}
 	states[child].failure_state = fs_child;
+	states[child].suffix_link = states[child].id == null_pattern_id ? states[states[child].failure_state].suffix_link : child;
 }
 
 /**
-* Add failure links to the array of states
+* Add failure links to the array of states (aldo add suffix links)
 *
 * @param states    The array of states
 */
@@ -257,9 +271,11 @@ static void add_failure_links(State* states) {
 	ChildrenListNode* node;
 	// add the first level to the queue, and put their failure link to 0
 	states[0].failure_state = 0;
+	states[0].suffix_link = 0;
 	foreach_child(node, c, cur_state, states[0].children) {
 		queue_add(q, cur_state);
 		states[cur_state].failure_state = 0;
+		states[cur_state].suffix_link = states[cur_state].id == null_pattern_id ? 0 : cur_state;
 	}
 	while (queue_not_empty(q)) {
 		cur_state = queue_pop(q);
@@ -284,9 +300,11 @@ static void free_tree(TreeNode *root) {
 	free(root);
 }
 
+
 /******************************************************************************
-*     API FUNCTIONS
+*		API FUNCTIONS
 ******************************************************************************/
+
 
 /**
 * Create new AC struct
@@ -372,11 +390,10 @@ pattern_id_t lmac_read_char(void* obj, char c) {
 	}
 	if (current_child) {
 		ac->current_state = current_child;
-		return states[current_child].id;
 	} else{
 		ac->current_state = current_state;
-		return states[current_state].id;
 	}
+	return states[states[ac->current_state].suffix_link].id;
 }
 
 /**

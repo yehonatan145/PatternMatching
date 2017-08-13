@@ -4,6 +4,12 @@
 * Implement the initialization of the mps engine in the configuration
 */
 
+
+/******************************************************************************
+*		API FUNCTIONS
+******************************************************************************/
+
+
 #include "mps.h"
 #include "PatternsTree.h"
 #include "conf.h"
@@ -15,19 +21,18 @@
 #include "mplmac.h"
 
 
+/******************************************************************************
+*		API FUNCTIONS
+******************************************************************************/
+
+
 MpsElem mps_table[MPS_SIZE];
 
 
-/**
-* Setup the algorithms table for the mps.
-*
-* Should run before parsing arguments, so we can know what algorithms we have at parsing time.
-*/
-void mps_table_setup() {
-	mps_ac_register();
-	mps_bg_register();
-	mps_lmac_register();
-}
+/******************************************************************************
+*		INNER FUNCTIONS
+******************************************************************************/
+
 
 /**
 * Initialize the mps instances in the configuration.
@@ -90,6 +95,12 @@ void compile_all_instances(Conf* conf) {
 	mps_table[algo].compile(obj);
 }
 
+
+/******************************************************************************
+*		API FUNCTIONS
+******************************************************************************/
+
+
 /**
 * Initialize the Multi-Pattern Search (mps) in the configuration
 *
@@ -99,4 +110,15 @@ void init_mps(Conf* conf) {
 	init_mps_instances(conf);
 	conf->patterns_tree = patterns_tree_build(conf, (void*)conf, add_pattern_to_all_instances);
 	compile_all_instances(conf);
+}
+
+/**
+* Setup the algorithms table for the mps.
+*
+* Should run before parsing arguments, so we can know what algorithms we have at parsing time.
+*/
+void mps_table_setup() {
+	mps_ac_register();
+	mps_bg_register();
+	mps_lmac_register();
 }

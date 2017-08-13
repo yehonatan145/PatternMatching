@@ -14,7 +14,9 @@ int main(int argc, char **argv) {
 	memset(conf, 0, sizeof(Conf));
 	mps_table_setup();
 	parse_arguments(argc, argv, conf);
+	printf("Initializing Multi-Pattern Search engine\n");
 	init_mps(conf);
+	printf("Start the Algorithms measuring\n");
 	measure_instances_stats(conf);
 	write_stats_to_file(conf);
 	printf("program done\n");

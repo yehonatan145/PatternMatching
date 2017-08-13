@@ -1,4 +1,19 @@
+/**
+* Calculate the Rabin-Karp fingerprint of patterns
+*/
+
+/******************************************************************************************************
+*		INCLUDES
+******************************************************************************************************/
+
+
 #include "Fingerprint.h"
+
+
+/******************************************************************************************************
+*		API FUNCTIONS
+******************************************************************************************************/
+
 
 /**
 * Calculate the fingerprint of a sequence.
@@ -12,18 +27,18 @@
 * @return       The fingerprint of the sequence
 */
 fingerprint_t calc_fp(char* seq, size_t len, FieldVal* rn, FieldVal* r, fingerprint_t p) {
-    fingerprint_t ret = 0, current_rn = 1, current_inv_rn = 1;
-    fingerprint_t r_val = r->val, r_inv = r->inv; // So we won't access memory all the time
-    size_t i;
-    for (i = len; i > 0; --i) {
-        ret += (*(seq++) * current_rn);
-        ret %= p;
-        current_rn = (current_rn * r_val) % p;
-        current_inv_rn = (current_inv_rn * r_inv) % p;
-    }
-    rn->val = current_rn;
-    rn->inv = current_inv_rn;
-    return ret;
+	fingerprint_t ret = 0, current_rn = 1, current_inv_rn = 1;
+	fingerprint_t r_val = r->val, r_inv = r->inv; // So we won't access memory all the time
+	size_t i;
+	for (i = len; i > 0; --i) {
+		ret += (*(seq++) * current_rn);
+		ret %= p;
+		current_rn = (current_rn * r_val) % p;
+		current_inv_rn = (current_inv_rn * r_inv) % p;
+	}
+	rn->val = current_rn;
+	rn->inv = current_inv_rn;
+	return ret;
 }
 
 /**
@@ -46,19 +61,19 @@ fingerprint_t calc_fp_with_prefix(char*            seq,
                                   FieldVal        *rn,
                                   FieldVal        *r,
                                   fingerprint_t    p) {
-    fingerprint_t current_rn = rn->val, current_inv_rn = rn->inv;
-    fingerprint_t r_val = r->val, r_inv = r->inv; // So we won't access memory all the time
-    size_t i;
-    seq += prefix_len;
-    for (i = len - prefix_len; i > 0; --i) {
-        prefix_fp += *(seq++) * current_rn;
-        prefix_fp %= p;
-        current_rn = (current_rn * r_val) % p;
-        current_inv_rn = (current_inv_rn * r_inv) % p;
-    }
-    rn->val = current_rn;
-    rn->inv = current_inv_rn;
-    return prefix_fp;
+	fingerprint_t current_rn = rn->val, current_inv_rn = rn->inv;
+	fingerprint_t r_val = r->val, r_inv = r->inv; // So we won't access memory all the time
+	size_t i;
+	seq += prefix_len;
+	for (i = len - prefix_len; i > 0; --i) {
+		prefix_fp += *(seq++) * current_rn;
+		prefix_fp %= p;
+		current_rn = (current_rn * r_val) % p;
+		current_inv_rn = (current_inv_rn * r_inv) % p;
+	}
+	rn->val = current_rn;
+	rn->inv = current_inv_rn;
+	return prefix_fp;
 }
 
 

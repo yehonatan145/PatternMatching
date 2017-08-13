@@ -6,33 +6,34 @@
 #define BGPS_H
 
 /******************************************************************************************************
-*       INCLUDES:
+*		INCLUDES
 ******************************************************************************************************/
+
 
 #include "Fingerprint.h"
 #include "kmprt.h"
 #include "util.h"
 
+
 /******************************************************************************************************
-*		DEFINITIONS:
+*		DEFINITIONS
 ******************************************************************************************************/
 
+
 typedef unsigned long long pos_t;
-#define LOG printf
 
 /**
 * Because we check each stage every log(n) characters, we might not report in time on the last one.
 * In order to solve this, whenever we have a VO in the last stage (and in 1-before-last in case that the length
 * difference between the last and 1-before-last stages is smaller than log(n)), we need to check them every char.
 */
-#define BG_HAVE_LAST_STAGE_FLAG				0x1 // States that we have VO in last stage
-#define BG_HAVE_BEFORE_LAST_STAGE_FLAG		0x2 // States that we have VO in 1-before-last stage
-#define BG_NEED_BEFORE_LAST_STAGE_FLAG		0x4 // States whether we need to check 1-before-last stage
-                                            	// (the langth difference between the last stages is smaller than log(n))
+#define BG_HAVE_LAST_STAGE_FLAG          0x1 // States that we have VO in last stage
+#define BG_HAVE_BEFORE_LAST_STAGE_FLAG   0x2 // States that we have VO in 1-before-last stage
+#define BG_NEED_BEFORE_LAST_STAGE_FLAG   0x4 // States whether we need to check 1-before-last stage
+                                             // (the langth difference between the last stages is smaller than log(n))
+#define BG_SHORT_PATTERN_FLAG            0x8 // when the pattern is too short, we just use kmp real-time version instead
 
-#define BG_SHORT_PATTERN_FLAG				0x8 // when the pattern is too short, we just use kmp real-time version instead
 #define BG_SHORT_PATTERN_LENGTH 8
-
 
 
 /**
@@ -102,15 +103,23 @@ typedef struct {
 // because we need to save the fingerprint of the all pattern
 #define N_STAGES(x) ((x)->logn - (x)->first_stage)
 
+
 /******************************************************************************************************
-*		FUNCTIONS TO EXTERN:
+*		API FUNCTIONS
 ******************************************************************************************************/
+
 
 BGStruct* bg_new(char* pattern, size_t n, field_t p);
 int bg_read_char(BGStruct* bg, char c);
 void bg_free(BGStruct* bg);
 size_t bg_get_total_mem(BGStruct* bg);
 void bg_reset(BGStruct* bg);
+
+
+/******************************************************************************************************
+*		INLINE FUNCTIONS
+******************************************************************************************************/
+
 
 static inline size_t bg_get_length(BGStruct* bg) {
 	return bg->n;

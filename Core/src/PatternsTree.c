@@ -31,8 +31,21 @@
 * it to them IN CONSTRUCTION TIME (the patterns tree construction function should be given a callback function,
 * to add the patterns with it).
 */
+
+
+/******************************************************************************
+*		INCLUDES
+******************************************************************************/
+
+
 #include "PatternsTree.h"
 #include "conf.h"
+
+
+/******************************************************************************
+*		DEFINITIONS
+******************************************************************************/
+
 
 // ============ FOR TESTING ===================
 void print_fpt(FullPatternsTree* full_tree);
@@ -59,6 +72,12 @@ PatternInternalID null_pattern_internal_id = {-1,-1};
 #define IS_NULL_PATTERN_INTERNAL_ID(id) ((id).file_number == null_pattern_internal_id.file_number \
                                          && (id).line_number == null_pattern_internal_id.line_number)
 
+
+/******************************************************************************
+*		INNER FUNCTIONS
+******************************************************************************/
+
+
 /**
 * Check whether one string is (real) suffix of another
 *
@@ -69,7 +88,7 @@ PatternInternalID null_pattern_internal_id = {-1,-1};
 *
 * @return           1 if the first string is suffix of the second one, 0 otherwise
 */
-int _is_suffix_of(char* suf, size_t suf_len, char* str, size_t str_len) {
+static int _is_suffix_of(char* suf, size_t suf_len, char* str, size_t str_len) {
 	if (str_len <= suf_len) {
 		return 0;
 	}
@@ -84,7 +103,7 @@ int _is_suffix_of(char* suf, size_t suf_len, char* str, size_t str_len) {
 * @param pat    The prefix of the child from the parent
 * @param n      The length of the pattern
 */
-void fpt_add_child_to_list(FptEdge** list, FptNode* node, char* pat, size_t n) {
+static void fpt_add_child_to_list(FptEdge** list, FptNode* node, char* pat, size_t n) {
 	if (!list) {
 		return;
 	}
@@ -113,7 +132,7 @@ void fpt_add_child_to_list(FptEdge** list, FptNode* node, char* pat, size_t n) {
 * @param list     Pointer to the edge list
 * @param child    The edge to remove from the list
 */
-void fpt_remove_child_from_list(FptEdge** list, FptEdge* child) {
+static void fpt_remove_child_from_list(FptEdge** list, FptEdge* child) {
 	if (child->next) {
 		child->next->prev = child->prev;
 	}
@@ -136,7 +155,7 @@ void fpt_remove_child_from_list(FptEdge** list, FptEdge* child) {
 *
 * @return           Pointer to the new child node created
 */
-FptNode* fpt_create_new_child(FptNode* parent, char* pat, size_t n, PatternInternalID id) {
+static FptNode* fpt_create_new_child(FptNode* parent, char* pat, size_t n, PatternInternalID id) {
 	FptNode* node = (FptNode*)malloc(sizeof(FptNode));
 	if (node == NULL) {
 		perror("failed to allocate memory");
@@ -164,7 +183,7 @@ FptNode* fpt_create_new_child(FptNode* parent, char* pat, size_t n, PatternInter
 * @param n       The length of the pattern
 * @param id      The pattern id of the pattern
 */
-void fpt_add_pattern_to_node(FptNode* node, char* pat, size_t n, PatternInternalID id) {
+static void fpt_add_pattern_to_node(FptNode* node, char* pat, size_t n, PatternInternalID id) {
 	FptEdge *current_edge, *next_edge;
 	FptNode *new_node = NULL;
 
@@ -203,7 +222,7 @@ void fpt_add_pattern_to_node(FptNode* node, char* pat, size_t n, PatternInternal
 * @param n      The length of the pattern
 * @param id     The id of the pattern
 */
-void fpt_add_pattern(FullPatternsTree* tree, char* pat, size_t n, PatternInternalID id) {
+static void fpt_add_pattern(FullPatternsTree* tree, char* pat, size_t n, PatternInternalID id) {
 	fpt_add_pattern_to_node(tree->root, pat, n, id);
 }
 
@@ -213,7 +232,7 @@ void fpt_add_pattern(FullPatternsTree* tree, char* pat, size_t n, PatternInterna
 *
 * @return       A new dynamically allocated empty Full Patterns Tree
 */
-FullPatternsTree* fpt_new() {
+static FullPatternsTree* fpt_new() {
 	FullPatternsTree* ret = (FullPatternsTree*) malloc(sizeof(FullPatternsTree));
 	if (ret == NULL) {
 		perror("failed to allocate memory");
@@ -238,7 +257,7 @@ FullPatternsTree* fpt_new() {
 *
 * @return               The longest patterns found
 */
-size_t fpt_fill_with_dict_file(FullPatternsTree* tree, size_t file_index, char* filename) {
+static size_t fpt_fill_with_dict_file(FullPatternsTree* tree, size_t file_index, char* filename) {
 	FILE* fp;
 	char* line = NULL;
 	char* pat = NULL;
@@ -253,6 +272,7 @@ size_t fpt_fill_with_dict_file(FullPatternsTree* tree, size_t file_index, char* 
 		FatalExit();
 	}
 	while ((read = getline(&line, &len, fp)) != -1) {
+		++line_num;
 		pat = NULL;
 		if (line[read - 1] == '\n') --read;
 		pat_len = parse_pattern_from_line(line, read, &pat);
@@ -263,7 +283,7 @@ size_t fpt_fill_with_dict_file(FullPatternsTree* tree, size_t file_index, char* 
 			if (pat_len > max_pat_len) max_pat_len = pat_len;
 		}
 		if (pat) free(pat);
-		++line_num;
+		
 	}
 	free(line);
 	fclose(fp);
@@ -277,7 +297,7 @@ size_t fpt_fill_with_dict_file(FullPatternsTree* tree, size_t file_index, char* 
 *
 * @return       A dynamically allocated Full-Patterns-Tree filled with the patterns from the dictionary files
 */
-FullPatternsTree* fpt_build(Conf* conf) {
+static FullPatternsTree* fpt_build(Conf* conf) {
 	FullPatternsTree* ret = fpt_new();
 	size_t i, n_dictionary_files = conf->n_dictionary_files, max_pat_len = 0, total_max_pat_len = 0;
 	char** dictionary_files = conf->dictionary_files;
@@ -294,7 +314,7 @@ FullPatternsTree* fpt_build(Conf* conf) {
 /**
 * Free a Full Patterns Tree node recursively
 */
-void fpt_free_node(FptNode* node) {
+static void fpt_free_node(FptNode* node) {
 	FptEdge *current_edge, *next_edge;
 
 	if (!node) {
@@ -314,7 +334,7 @@ void fpt_free_node(FptNode* node) {
 /**
 * Free memory of Full Pattern Tree
 */
-void fpt_free(FullPatternsTree* full_tree) {
+static void fpt_free(FullPatternsTree* full_tree) {
 	fpt_free_node(full_tree->root);
 	free(full_tree);
 }
@@ -325,7 +345,7 @@ void fpt_free(FullPatternsTree* full_tree) {
 * @param parent    The parent node
 * @param child     The node to add the parent as child
 */
-void add_child_to_node(PatternsTreeNode* parent, PatternsTreeNode* child) {
+static void add_child_to_node(PatternsTreeNode* parent, PatternsTreeNode* child) {
 	PatternsTreeEdge* edge = (PatternsTreeEdge*) malloc(sizeof(PatternsTreeEdge));
 	if (edge == NULL) {
 		perror("failed to allocate memory");
@@ -355,7 +375,7 @@ void add_child_to_node(PatternsTreeNode* parent, PatternsTreeNode* child) {
 *
 * @return          A dynamically allocated patterns tree node constructed from the given node
 */
-PatternsTreeNode* convert_fpt_node_to_patterns_tree_node(FptNode* node, char* buffer, size_t buffer_len, size_t pat_pos,
+static PatternsTreeNode* convert_fpt_node_to_patterns_tree_node(FptNode* node, char* buffer, size_t buffer_len, size_t pat_pos,
 			void* obj, void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
 	PatternsTreeNode* ret = (PatternsTreeNode*) malloc(sizeof(PatternsTreeNode));
 	if (ret == NULL) {
@@ -393,7 +413,7 @@ PatternsTreeNode* convert_fpt_node_to_patterns_tree_node(FptNode* node, char* bu
 *
 * @return       A dynamically allocated Patterns Tree constructed by the given Full Patterns Tree
 */
-PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, void* obj,
+static PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, void* obj,
 			void (*add_pattern_func)(void*, char*, size_t, pattern_id_t)) {
 	PatternsTree* tree = (PatternsTree*) malloc(sizeof(PatternsTree));
 	if (tree == NULL) {
@@ -406,6 +426,33 @@ PatternsTree* convert_fpt_to_patterns_tree(FullPatternsTree* full_tree, void* ob
 	free(buffer);
 	return tree;
 }
+
+/**
+* Free a node in a patterns tree recursilvely
+*
+* @param node       The node to free
+*/
+static void patterns_tree_free_node(PatternsTreeNode* node) {
+	PatternsTreeEdge *current_edge, *next_edge;
+
+	if (!node) {
+		return;
+	}
+	current_edge = node->edge_list;
+	while (current_edge) {
+		next_edge = current_edge->next;
+		if (current_edge->node) patterns_tree_free_node(current_edge->node);
+		free(current_edge);
+		current_edge = next_edge;
+	}
+	free(node);
+}
+
+
+/******************************************************************************
+*		API FUNCTIONS
+******************************************************************************/
+
 
 /**
 * Build a patterns tree from the dictionary files (configured in conf)
@@ -444,27 +491,6 @@ int is_pattern_suffix(pattern_id_t first, pattern_id_t second) {
 		cur = cur->parent;
 	}
 	return 0;
-}
-
-/**
-* Free a node in a patterns tree recursilvely
-*
-* @param node       The node to free
-*/
-void patterns_tree_free_node(PatternsTreeNode* node) {
-	PatternsTreeEdge *current_edge, *next_edge;
-
-	if (!node) {
-		return;
-	}
-	current_edge = node->edge_list;
-	while (current_edge) {
-		next_edge = current_edge->next;
-		if (current_edge->node) patterns_tree_free_node(current_edge->node);
-		free(current_edge);
-		current_edge = next_edge;
-	}
-	free(node);
 }
 
 /**
