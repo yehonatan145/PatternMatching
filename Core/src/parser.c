@@ -124,7 +124,7 @@ void parse_arguments(int argc, char* argv[], Conf* conf) {
 	conf->dictionary_files = (char**) malloc(n_dict);
 	conf->stream_files = (char**) malloc(n_stream);
 	optind = 1;
-	while ((opt = getopt(argc, argv, "d:s:o:")) != -1) {
+	while ((opt = getopt(argc, argv, "d:s:o:v")) != -1) {
 		switch (opt) {
 		case 'd':
 			conf->dictionary_files[dict_ind] = (char*) malloc(strlen(optarg) + 1);
@@ -139,6 +139,9 @@ void parse_arguments(int argc, char* argv[], Conf* conf) {
 		case 'o':
 			conf->output_file_name = (char*) malloc(strlen(optarg) + 1);
 			strcpy(conf->output_file_name, optarg);
+			break;
+		case 'v':
+			verbose = 1;
 			break;
 		case '?':
 			if (optopt == 'd' || optopt == 's' || optopt == 'o') {

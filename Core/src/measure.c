@@ -33,6 +33,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <time.h>
+#include <inttypes.h>
 
 
 /******************************************************************************
@@ -253,7 +254,10 @@ static void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stat
 	PerfEventGroupData* data = create_perf_events_data();
 
 	// start the measuring
-	printf("Measuring algorithm %s\n", mps_table[inst->algo].name);
+	if (verbose) {
+		printf("Measuring algorithm %s...", mps_table[inst->algo].name);
+		fflush(stdout);
+	}
 	perf_event_data_ioctl(data, PERF_EVENT_IOC_RESET);
 	for (i = 0; i < n_stream_files; ++i) {
 		size_t j;
@@ -296,8 +300,7 @@ static void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stat
 		} while (len_read == STREAM_BUFFER_SIZE);
 		close(fd);
 	}
-
-	printf("Finished measuring algorithm %s\n", mps_table[inst->algo].name);
+	if (verbose) printf("Done\n");
 	
 	read_perf_events_results(data, stats);
 	stats->total_mem = mps_table[inst->algo].total_mem(inst->obj);
@@ -330,20 +333,60 @@ void measure_instances_stats(Conf* conf) {
 * @param conf    The configuration struct with the statistic and the output file name
 */
 void write_stats_to_file(Conf* conf) {
-	// TODO implement, meanwhile print the results
-	for (int i = 0; i < conf->n_mps_instances; ++i) {
-		InstanceStats* is = &conf->mps_instances_stats[i];
-		printf("algo %d - %s:\n", i, mps_table[i].name);
-		printf("  total memory: %lu\n", is->total_mem);
-		printf("  suc = %lu; false_pos = %lu; false_neg = %lu; partial = %lu\n",
-			is->suc_rate.success, is->suc_rate.false_pos, is->suc_rate.false_neg, is->suc_rate.partial_suc);
-		printf("  perf events:\n");
-		for (size_t j = 0; j < N_PERF_GROUPS; ++j) {
-			size_t n = perf_events[j].n;
-			for (size_t k = 0; k < n; ++k) {
-				printf("    %s : %lu\n", perf_events[j].events[k].desc, is->perf_groups_stats[j].perf_stats[k]);
+	int output_fd;
+	size_t i,j,k,n, algo, total_mem, len, sum;
+	InstanceStats* is;
+	MpsInstance* mi;
+	SuccessRate* sr;
+	char buf[256];
+
+	if (verbose) printf("opening file %s to write results\n", conf->output_file_name);
+	output_fd = open(conf->output_file_name, O_WRONLY | O_CREAT);
+	if (output_fd == -1) {
+		fprintf(stderr, "failed to open results file %s: %s\n", conf->output_file_name, strerror(errno));
+	}
+	write(output_fd, "Algorithm", 9);
+	write(output_fd, ",Total Memory Used", 18);
+	write(output_fd, ",False Positive Rate", 20);
+	write(output_fd, ",False Negative Rate", 20);
+	write(output_fd, ",Partial Success Rate", 21);
+	for (i = 0; i < N_PERF_GROUPS; ++i) {
+		n = perf_events[i].n;
+		for (j = 0; j < n; ++j) {
+			write(output_fd, ",", 1);
+			write(output_fd, perf_events[i].events[j].desc, strlen(perf_events[i].events[j].desc));
+		}
+	}
+	for (k = 0; k < conf->n_mps_instances; ++k) {
+		write(output_fd, "\n", 1);
+		is = &conf->mps_instances_stats[k];
+		mi = &conf->mps_instances[k];
+		algo = mi->algo;
+		sr = &is->suc_rate;
+		write(output_fd, mps_table[algo].name, strlen(mps_table[algo].name));
+		total_mem = mps_table[algo].total_mem(mi->obj);
+		len = snprintf(buf, sizeof(buf), "%zu", total_mem);
+		write(output_fd, ",", 1);
+		write(output_fd, buf, len);
+		sum = sr->success + sr->false_pos + sr->false_neg + sr->partial_suc;
+		len = snprintf(buf, sizeof(buf), "%.6Lf", (long double)sr->false_pos / sum);
+		write(output_fd, ",", 1);
+		write(output_fd, buf, len);
+		len = snprintf(buf, sizeof(buf), "%.6Lf", (long double)sr->false_neg / sum);
+		write(output_fd, ",", 1);
+		write(output_fd, buf, len);
+		len = snprintf(buf, sizeof(buf), "%.6Lf", (long double)sr->partial_suc / sum);
+		write(output_fd, ",", 1);
+		write(output_fd, buf, len);
+
+		for (i = 0; i < N_PERF_GROUPS; ++i) {
+			n = perf_events[i].n;
+			for (j = 0; j < n; ++j) {
+				len = snprintf(buf, sizeof(buf), "%" PRIu64, is->perf_groups_stats[i].perf_stats[j]);
+				write(output_fd, ",", 1);
+				write(output_fd, buf, len);
 			}
 		}
 	}
-	
+	close(output_fd);
 }
