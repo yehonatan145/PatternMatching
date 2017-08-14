@@ -1517,6 +1517,8 @@ org.hsqldb.jdbc
 |30 0D 06 09 2A 86 48 86 F7 0D 01 01 01 05 00 03 82|
 |02 03 01 00 01 A3 0D 30 0B 30 09 06 03 55 1D 13 04 02 30 00 30 0D 06 09 2A 86 48 86 F7 0D 01 01 0B 05 00|
 |ff ff ff|tcp/CONNECT/3/
+Content-Type|3a 20|text/javascript|0d 0a|Server|3a 20|Apache/2.2.3 (CentOS)|0d 0a|Pragma|3a|
+|0d 0a|Expires|3a 20|0|0d 0a|
 NOTICE AUTH
 Looking up your hostname...
 MSG 
@@ -5960,20 +5962,16 @@ a=HT&u=
 &isp=
 POST
 .php
-Content-Type|3a 20|application/x-www-form-urlencoded
 username=
-&password=
-&remember_me=
+&pass
 &vi=
 POST
 .php
-Content-Type|3a 20|application/x-www-form-urlencoded
 email=
 &pswd=
 &Button1=
 POST
 .php
-Content-Type|3a 20|application/x-www-form-urlencoded
 server=
 &username=
 &password=
@@ -6237,15 +6235,11 @@ Referer|3a|
 |01 00 00 01 00 00 00 00 00 00|
 |0d|s-p-o-o-f-e-d|07|h-o-s-t|04|name
 POST
-.php
-&ccnumber=
-&expmonth=
-&expyear=
-&cvv=
-&ccpin=
+ccnum
+&exp
+&cvv
 POST
-.php
-&q1=
+q1=
 &answer1=
 &q2=
 &answer2=
@@ -6389,7 +6383,6 @@ Referer|3a|
 /snitch?default|5f|keyword=
 /052F
 POST
-.php
 outlookuser=
 outlookpassword=
 POST
@@ -7126,7 +7119,6 @@ POST
 |4d 61 6e 75 66 75 63 6b|
 |4d 61 63 72 6f 77 69 6e|
 POST
-.php
 mailtype=
 &Email
 &Passwd
@@ -7138,14 +7130,12 @@ Content-type|3a 20|application/vnd.ms-excel
 /configuration/sendusername
 /configuration/sendpassword
 POST
-.php
 __RequestVerificationToken=
 &forgotPassword=
 &lat=
 &userName=
 &password=
 POST
-.php
 __RequestVerificationToken=
 &bankId=
 &email=
@@ -7228,13 +7218,11 @@ toggleFullScreen
 addEventListener
 countdown
 POST
-.php
 name-re=
 &dob
 &donnee
 &is_valid_email
 POST
-.php
 holdername=
 &numcard
 &ccv
@@ -7303,7 +7291,6 @@ e.ctrlKey
 e.keyCode
 onbeforeunload
 POST
-.php
 .php?cmd=login_submit
 login=
 &passwd=
@@ -7313,14 +7300,12 @@ Content-Type|3a 20|text/html
 STORAGE UPGRADE
 Global Internet Administration!
 POST
-.php
 ident=
 &ReadOut=
 &prenom=
 &nuum=
 &xrypt=
 POST
-.php
 nom=
 &prenom=
 &email=
@@ -7522,7 +7507,6 @@ username=
 &login.x=
 &login.y=
 POST
-.php
 1=
 &password=
 &cvv1=
@@ -7591,7 +7575,6 @@ agencia=
 &entrada_4=
 &looking1=
 POST
-.php
 redirect=
 &txtState=
 &txtCount=
@@ -7638,7 +7621,6 @@ Content-Type|3a 20|text/html
 <title> Windows Official Support
 This Is A Critical Warning
 POST
-.php
 usuario=
 &contrasena=
 &hdtxt=
@@ -7657,14 +7639,12 @@ Content-Type|3a 20|application/x-msdownload|0d 0a|
 Content-Length|3a 20|3|0d 0a|
 |3d 28 28|
 POST
-.php
 FromPreSignIn_SIP=
 &RSA_DEVPRINT=
 &ROLLOUT=
 &user=
 &pass=
 POST
-.php
 card_num=
 &full_name=
 &ssn_num=
@@ -7796,7 +7776,6 @@ EB02EB05E8F9FFFFFF
 POST
 craigslist.org
 POST
-.php
 login=
 &pass=
 &submit=Sign+In&curl_version=
@@ -8233,7 +8212,6 @@ GET
 &subid=alert
 /r.php?h=
 |0d 0a|
-|8000a80000000000000000000000000000000000ffff000000000000ffff0000000000000000000000000000000000000000000000f1dfff000000000000000020f0dfff00f1dfffffffffff600004100000000080efdfff|
 var|20|total|20|=|20 22 22 3b|
 total|20|=|20|total
 history.pushState
@@ -8260,6 +8238,195 @@ agencia=
 &conta=
 &senha8=
 &ir=
+/e71cac9dd645d92189c49e2b30ec627a/dcb4c6c6149b2208fbcf7c9d8c59548e
+/d/
+/?q=r4&
+Content-Description|3a 20|File Transfer
+ci_session
+Expires|3a 20|0
+|3c 70 61 72 61 6d 20 6e 61 6d 65 3d 46 6c 61 73 68 56 61 72 73 20 76 61 6c 75 65 3d 22 69 64 64 71 64 3d 27|
+|25 37 37 25 37 33 25 36 33 25 37 32 25 36 39 25 37 30 25 37 34 25 32 45 25 36 35 25 37 38 25 36 35|
+|2e 53 74 61 72 74 52 65 6d 6f 74 65 44 65 73 6b 74 6f 70|
+|01 00 00 01 00 00 00 00 00 00|
+|08|roughted|03|com|00|
+GET
+/?&tid=
+&red=
+&abt=
+&v=
+|4a694270626e525562314e30636968685a4752794b|
+|596761573530564739546448496f5957526b6369|
+|6d49476c7564465276553352794b47466b5a484970|
+|496d784a62477873496a6f69646d6c7964485668624842796233526c5933|
+|4a735357787362434936496e5a70636e523159577877636d39305a574e30|
+|6962456c73624777694f694a3261584a306457467363484a766447566a64|
+|593268796479677a4d6a63324e79|
+|6a61484a334b444d794e7a59334b|
+|4e6f636e636f4d7a49334e6a6370|
+|657949784e7a51784e6949364e4441344d44597a4e6977694d5463304f5459694f6a51774f4441324d7a5973496a45334e6a4d78496a6f304d4467304e7a51344c4349784e7a59304d43|
+|73694d5463304d5459694f6a51774f4441324d7a5973496a45334e446b32496a6f304d4467774e6a4d324c4349784e7a597a4d5349364e4441344e4463304f4377694d5463324e444169|
+200
+Content-Type|3a 20|text/html
+<audio autoplay=
+<source src=
+warning.mp3|22|
+audio/mpeg
+/?
+WinHttp.WinHttpRequest.5
+POST
+/foo-autenticazione.php
+pass
+POST
+agencia=
+&conta=
+&senha_eletronica=
+&senha_cartao=
+&celular=
+POST
+cuenta=
+&cuenta=
+&nvoWizard=
+&domain=
+POST
+AppleSession
+Cookie|3a 20|AppleSession
+POST
+cnum=
+&exp=
+&cvv=
+&pin=
+&ssn=
+Accept|3a 20 2a 2f 2a 0d 0a|Accept-Language|3a|
+Firefox/51.0
+/?
+=x
+<title>iCloud</title>
+<title>Google Docs</title>
+<title>Docusign</title>
+<title>Meet Google Drive - One Place For All Your Files</title>
+<title>Alibaba&nbsp|3b|Manufacturer&nbsp|3b|Directory
+<title>Yahoo - login
+<title>Log in to your PayPal account</title>
+<title>Excel Online
+<title>Free Mobile - Bienvenue dans votre Espace
+<title>AOL Mail|3a 20|Simple, Free, Fun</title>
+<title>Outlook Web Access</title>
+<title>Outlook Web App</title>
+<title>Facebook Help Center</title>
+<title>Yahoo! Mail
+<title>Adobe PDF</title>
+<TITLE>DHL |7c| Tracking</TITLE>
+<TITLE>Sign In - Adobe ID</TITLE>
+<title>Welcome to Facebook</title>
+<title>Dropbox Business</title>
+|7b 5c 72 74|
+|5C 6F 62 6A 61 75 74 6C 69 6E 6B|
+Content-Length|3a 20|8|0d 0a|
+|6e 6f 62 69 6e 72 65 74|
+200
+Amazon Sign In</title>
+account is connected with Amazon
+Forgot your password?
+REMOTE_URL
+C_TIMEOUT
+apply_payload
+execute_request
+|2e|hta|0d 0a|
+RETR 
+200
+Content-Type|3a 20|text/html
+<title>
+microsoft official support
+200
+Content-Type|3a 20|text/html
+<title>
+security error 0x00759b
+200
+Content-Type|3a 20|text/html
+<title>
+virus warning alert
+200
+Content-Type|3a 20|text/html
+<title>
+official apple support
+200
+Content-Type|3a 20|text/html
+<title>
+windows official support
+.hta
+User-Agent|3a 20|Mozilla/4.0 (compatible|3b| MSIE 7.0|3b|
+200
+Content-Type|3a 20|text/html
+<title>
+bitcoin wallet - blockchain
+<title>
+facebook email security
+<title>Capitec Internet Banking</title>
+POST
+firstName=
+&lastName=
+&cardNumber=
+&expirationMonth=
+&expirationYear=
+&securityCode=
+&SubmitButton=
+&msg_agree=
+POST
+-login.id-107sbtd9cbhsbt
+|01 00 00 01 00 00 00 00 00 00|
+login
+107sbtd9cbhsbt
+200
+function getSystemInfo
+OnChatTextKeyDown
+function scrollcheck
+function callconv
+function istyping
+function dochat
+var a=a|7c 7c|window.event|3b|doOpen|28 22|http
+/?nbVykj
+|73 29 88 ff e0 d1 0e 74|
+Accept|3a 20 2a 2f 2a 0d 0a|Accept-Language|3a|
+Mozilla/4.0 (compatible|3b 20|MSIE 6.0|3b 20|Windows NT 5.0)
+|5b 30 5d 5b 22 41 22 2b|
+|29 2b 22 58 22 2b 22 4f 22 2b|
+|72 65 74 75 72 6e 20 28 22 22 2b|
+|29 2b 22 41 74 22 5d|
+|43 72 65 61 74 65 4f 62 6a 65 63 74 28|
+|45 78 65 63 75 74 65 28|
+|52 65 44 69 6d|
+|50 72 65 73 65 72 76 65|
+|55 6e 45 73 63 61 70 65|
+POST
+1login=
+&login=
+&Domain=
+&pass=
+<script
+powershell
+YQBtAHMAaQBJAG4AaQB0AEYAYQBpAGwAZQBk
+<script
+powershell
+EAbQBzAGkASQBuAGkAdABGAGEAaQBsAGUAZ
+<script
+powershell
+hAG0AcwBpAEkAbgBpAHQARgBhAGkAbABlAG
+<script
+powershell
+System.Management.Automation.AmsiUtils
+amsiInitFailed
+setvalue
+$null
+$true
+<script
+powershell
+KAAsACQAKABbAEMAbwBuAHYAZQByAHQAXQA6ADoARgByAG8AbQBCAGEAcwBlADYANABTAHQAcgBpAG4AZwAo
+<script
+powershell
+gALAAkACgAWwBDAG8AbgB2AGUAcgB0AF0AOgA6AEYAcgBvAG0AQgBhAHMAZQA2ADQAUwB0AHIAaQBuAGcAK
+<script
+powershell
+oACwAJAAoAFsAQwBvAG4AdgBlAHIAdABdADoAOgBGAHIAbwBtAEIAYQBzAGUANgA0AFMAdAByAGkAbgBnAC
 /error?/
 %u002F
 /TEST?/
@@ -12084,10 +12251,14 @@ User-Agent|3a 20|Mozilla/4.0 (compatible|3b| MSIE 7.0|3b|
 285d7b6cf94d8fdc657edaa73c2f07f3
 |55 04 03|
 |0e|publicstats.tk
+/api/v1/address/txs/17gd1msp5FnMcEMF1MitTNSsYs7w7AQyCt?_=
+User-Agent|3a 20|Mozilla/4.0 (compatible|3b 20|MSIE 7.0|3b|
 |01 00 00 01 00 00 00 00 00 00|
 |10|j24ojpexpgaorlxj
 POST
 craigslist.org
+|55 04 03|
+|0c|sogelfeld.ws
 Content-Length|3a|
 {
 }
@@ -12407,6 +12578,8 @@ User-Agent|3a| x00_-gawa.sa.pilipinas.2015
 NTLMSSP
 |FE|SMB
 |03 00|
+|00 01|
+|00 01 ff ff|
 |3f 3f 3f 3f 3f 3f 3f 3f 3f 3f 3f 3f 3f 3f 3f 3f 3f 61 7e 20 25 25 25 25 25 58 58|
 |61 25 61 25 61 25 61 25 61 25 61 25 61 25|
 |45 6e 74 72 79 20 61 61 61 61 61 61 61 61 61 61 61 61|
@@ -12647,6 +12820,8 @@ UpgradeTools_Task
 |20 28 29 20 50 4a 4c 20|
 FSDIRLIST|20|NAME=
 |22|0|3a 5c 2e 2e 5c 2e 2e 5c 2e 2e|
+|FF 53 4d 42 72|
+|00 26|
 POST
 |0d 0a 0d 0a 3c 3f|xml|20|version
 |3c|methodCall|3e|
@@ -13433,6 +13608,7 @@ POST
 Authorization|3a 20|Digest
 username=|22|
 response=
+|8000a80000000000000000000000000000000000ffff000000000000ffff0000000000000000000000000000000000000000000000f1dfff000000000000000020f0dfff00f1dfffffffffff600004100000000080efdfff|
 ack=
 extension=bprd
 ack=
@@ -13451,6 +13627,20 @@ SMB|a2 00|
 file://
 /$MFT/
 src
+|11 49 00 00 00 00 00 00 00 00 00 00 00 00 00 00 28 9E|
+SMB
+|05 00|
+|00 2e 00 73 00 6f 00|
+@PJL FS
+NAME=
+FollowSite=
+SiteName=
+-confirm
+|ff|SMB|32 00 00 00 00 18 07 c0|
+|00 00 00 00 00 00 00 00 00 00 00 08 ff fe 00 08|
+|0f 0c 00 00 10 01 00 00 00 00 00 00 00 f2 00 00 00 00 00 0c 00 42 00 00 10 4e 00 01 00 0e 00 0d 10 00|
+|00 00 78 00|
+|00 00 00 05|
 USER 
 LIST 
 USER
@@ -14314,6 +14504,25 @@ Content-Type|3a 20|text/html
 <!-- Proxified page constructed by miniProxy
 /qr/bitcoinPNG.php?address=
 Host|3a 20|www.btcfrog.com|0d 0a|
+POST
+wb_form_id=
+&message=&wb_input_0=
+&wb_input_0=
+&wb_input_1=
+&wb_input_1=
+200
+Content-Type|3a 20|text/html
+<title>
+|26 23|x
+|3b 26 23|x
+|3b 26 23|x
+|3b 26 23|x
+|3b 26 23|x
+</title>
+POST
+site40.net|0d 0a|
+|55 04 03|
+|08|go-phish
 webpdpcookie
 .gator.com
 /download/cabs/
@@ -16325,10 +16534,8 @@ GET
 source=
 &event=
 &implementation_id=
-&subid=
 user_id=
 &useragent=
-&adProvider=
 POST
 User-Agent|3a 20|Downloader|20|
 |0a|Content-Disposition|3a 20|form-data|3b 20|name=|22|data|22 0d 0a|
@@ -16380,6 +16587,8 @@ User-Agent|3a 20|Downloader|20|
 /data_files=
 &rnd=
 User-Agent|3a 20|Downloader 1
+GET
+User-Agent|3a 20|Proxy|20|Gear|20|Pro/
 /plugins/framework/script/content.hts
 ExecuteFile
 factory
@@ -16912,9 +17121,8 @@ POST
 |22|_mauthtoken=1|3b| path=/|3b|expires=|22|
 /kt/JpNx9n
 POST
-/get.php
-id=
-info=
+/get.php|20|HTTP/1.
+info
 lm=
 /watch/?
 lm=
@@ -16976,6 +17184,13 @@ POST
 &type=
 User-Agent|3a| Apache-HttpClient/
 [{|22|id|22 3a 22|0|22|,|22|command|22 3a 22|OK|22|}
+POST
+/ad-
+|3b 20|Android|20|
+RgQ7
+/inj/injek-1.php?id=
+|01 00 00 01 00 00 00 00 00 00|
+|0b|updatmaster|03|top|00|
 |A1 05 23 03 03 01 07|
 |313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131313131|
 |95 14 40 00 03 00 00 00 7C 70 40 00 01|
@@ -17108,7 +17323,6 @@ CCCC|20f0fd7f|SVWf
 |00 00 5C 00 72 00 65 00 63 00 79 00 63 00 6C 00 65 00 72 00 5C|
 |00 00 5C 00 72 00 65 00 63 00 79 00 63 00 6C 00 65 00 72 00 5C|
 |00 2E 00 65 00 78 00 65|
-|FF 53 4d 42 72|
 |ff 53 4d 42 72|
 |00 00 00 00|
 |ff 53 4d 42 32|
@@ -18134,7 +18348,6 @@ User-Agent|3a 20|EBook|0d 0a|
 |0b|
 IOS-Self-Signed-Certificate-
 x-flash-version|3a 20|
-MSIE 
 |16 03|
 |55 04 0a|
 |0d|LogMeIn, Inc.
@@ -18663,8 +18876,11 @@ User-Agent|3a 20|QuickTime
 User-Agent|3a 20|
 select
 from
-|7b 22|method|22 3a 20 22|login|22 2c 20 22|params|22 3a 20 7b 22|login
-agent|22 3a 20 22|
+|7b 22|method|22 3a|
+|22|login|22 2c|
+|22|params|22 3a|
+|7b 22|login
+agent|22 3a|
 Host|3a 20|ip-score.com|0d 0a|
 |63 82 53 63 35 01 03|
 |0c 04|kali
@@ -18699,6 +18915,13 @@ Host|3a 20|www.tinytools.nu|0d 0a|
 |06|aqsatv|02|ps|00|
 GET
 Host|3a 20|aqsatv.ps
+X-Requested-With|3a 20|ShockwaveFlash/
+GET
+/text
+Host|3a 20|
+monip.outils-rezo.info|0d 0a|
+|01 00 00 01 00 00 00 00 00 00|
+|05|ipapi|02|co|00|
 |64 12 54 6a|
 |00 00 00 f4 1f 00 00|
 |10 23 54 67 00 08 00 00|
@@ -19068,6 +19291,8 @@ acunetix_wvs_security_test
 |03 00 00|
 |e0 00 00 00 00 00|
 Cookie|3a| mstshash=
+User-Agent|3a|
+|20|Nmap
 |D9 EE D9 74 24 F4 5B 81 73 13|
 |83 EB FC E2 F4|
 |EB 03 59 EB 05 E8 F8 FF FF FF|
@@ -19406,7 +19631,9 @@ MEMES
 |00 02|
 |00|
 |00 03|
-|0a 21 0a|version|20|
+|0a 21 20|version|20|
+|00 03|
+NVRAM config last update
 NICK 
 PRIVMSG 
 PRIVMSG 
@@ -28264,7 +28491,7 @@ ext=
 |55 04 0a|
 |0e|MyCompany Ltd|2e|
 GET
-/
+/en-us/
 =|20|HTTP/1.1|0d 0a|Accept|3a 20|*/*|0d 0a|
 GET
 /
@@ -33231,8 +33458,6 @@ busybox telnetd -p
 GET
 .php?uuid=
 User-Agent|3a 20|Go-http-client/
-/api/v1/address/txs/17gd1msp5FnMcEMF1MitTNSsYs7w7AQyCt?_=
-User-Agent|3a 20|Mozilla/4.0 (compatible|3b 20|MSIE 7.0|3b|
 |01 00 00 01 00 00 00 00 00 00|
 |07|dq
 |01 00 00 01 00 00 00 00 00 00|
@@ -33808,8 +34033,6 @@ Expect|3a 20|100-continue|0d 0a|
 |55 04 03|
 |0c|sogelfeld.ws
 |55 04 03|
-|0c|sogelfeld.ws
-|55 04 03|
 |0a|kmeses.com
 |55 04 03|
 |0c|sklaaaor.com
@@ -34117,7 +34340,6 @@ key=
 GET
 .php?key=
 &string=
-User-Agent|3a 20|Mozilla/3.0 (compatible|3b 20|Indy Library)|0d 0a|
 |01 00 00 01 00 00 00 00 00 00|
 |10|4ujngbdqqm6t2c53
 |01 00 00 01 00 00 00 00 00 00|
@@ -34142,6 +34364,230 @@ GET
 Host|3a 20|comboratiogferrdto.com|0d 0a|
 |01 00 00 01 00 00 00 00 00 00|
 |12|comboratiogferrdto|03|com|00|
+GET
+?clients=
+&reqs=visit.
+User-Agent|3a 20|RookIE/
+DECRYPT CODE|20 3a 20 20 20 20 20 20 20|
+POST
+.php
+hostname=csharp-
+&enckey=
+openssh
+POST
+ud7LDjtsTHe2tWeC8DYo8A**
+.php?mode=
+&crypted=
+&id=
+User-Agent|3a 20|Mozilla/4.0|0d 0a|
+X-Malware-Sinkhole|3a 20|
+|18 17 e9 e9 e9 e9|
+|1b 17 e9 e9 e9 e9|
+|01 00 00 01 00 00 00 00 00 00|
+|0f|secure-access10|02|mx|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0a|network190|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0d|mymensaje-sms|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|09|smscentro|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0c|ideas-telcel|03|com|02|mx|00|
+|01 00 00 01 00 00 00 00 00 00|
+|08|twiitter|03|com|02|mx|00|
+GET
+/lock.php
+User-Agent|3a 20|MyAgent|0d 0a|
+.DAT,K1|22 0d 0a|fso
+POST|20|/
+.php?hdr_ctx=
+|0d 0a|User-Agent|3a 20|Mozilla/5.0|0d 0a|
+.bin
+User-Agent|3a 20|Microsoft BITS/
+Accept|3a 20|*/*|0d 0a|
+DLOAD|0c|1|0c|1
+REQF|0c|1|0c|1
+|41 61 54 03|
+|63 63 63 63 63 63 63 63|
+GET
+.php?MD=
+Naoinstalado
+POST
+Accept|3a 20 2a 2f 2a 0d 0a|
+|7c|
+POST|20|/|20|HTTP/1.1|0d 0a|Accept|3a 20 2a 2f 2a 0d 0a|Host|3a|
+|00 00 00 00 9c 00 00 00 06 00 00 00 01 00 00 00|
+|b1 1d 00 00 02 00 00 00|
+|55 04 03|
+|0d|wwecuador.com
+POST
+config.php
+User-Agent|3a 20|Mozilla Firefox/4.0|0d 0a|
+dat=
+|01 00 00 01 00 00 00 00 00 00|
+|10|iuieylpvfurcvmpk
+|01 00 00 01 00 00 00 00 00 00|
+|10|cpawdrtxfjkwrkkl
+|01 00 00 01 00 00 00 00 00 00|
+|10|qfjhpgbefuhenjp7
+|01 00 00 01 00 00 00 00 00 00|
+|10|xpcx6erilkjced3j
+POST
+tinba/
+User-Agent|3a 20|Mozilla/5.0|28|compatible|3b| MSIE 10.0|3b| Windows NT 6.1|3b| Trident|2f|6.0|29|
+Cache-Control|3a 20|no-cache|0d 0a|
+|00 00 00 00 48 65 61 44|
+|00 00|
+User-Agent|3a| Mozilla/5.0 (Windows NT 6.1|3b| WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36
+Host|3a 20|myip.com.ua|0d 0a|
+GET
+.php?id=
+&c=
+&mk=
+&il=
+&vr=
+&bt=
+|22|login|22 3a|
+|22|slavf1@yandex.ru|22|
+|22|pass|22|
+|22|XMRig/
+POST
+Content-Type|3a 20|multipart/form-data|3b 20|boundary=
+Content-Disposition|3a 20|form-data|3b 20|name=|22|file|22 3b 20|filename=|22|
+|01 00 00 01 00 00 00 00 00 00|
+|08|vps2java|0f|securitytactics|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|03|job|09|yoyakuweb|0a|technology|00|
+|01 00 00 01 00 00 00 00 00 00|
+|06|resume|0c|immigrantlol|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|05|macos|09|exoticlol|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|03|css|0e|google-statics|03|com|00|
+POST
+User-Agent|3a 20|lock|0d 0a|
+|00 00 00|
+POST
+.php|20|HTTP/1.1|0d 0a|Host|3a 20|
+|0d 0a|User-Agent|3a 20|python
+|0d 0a 0d 0a|crid=
+&dta=
+|01 00 00 01 00 00 00 00 00 00|
+|11|fenrir-ransomware|0d|000webhostapp|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|10|37z2akkbd3vqphw5
+|22|login|22 3a|
+|22|ownyaga@gmail.com|22|
+|22|pass|22|
+|22|XMRig/
+|01 00 00 01 00 00 00 00 00 00|
+|09|bowenpres|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0a|bowenpress|03|net|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0a|bowenpress|03|org|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0a|bowenpross|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|08|datalink|03|one|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0c|secuerserver|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0b|epochatimes|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|05|vnews|02|hk|00|
+GET
+2.php?jpg=
+POST
+name=|22|banner|22 0d 0a|
+name=|22|jpg|22 0d 0a|
+name=|22|userfile|22 3b 0d 0a|
+|16|
+|01|
+|00 00 1b|4fp2u2ue4pyqdpfu
+|00 00 19|v5t5z6a55ksmt3oh.onion
+|01 00 00 01 00 00 00 00 00 00|
+|0e|french-cooking|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0d|coffeinoffice|03|xyz|00|
+GET
+.php?root=
+Accept|3a 20|text/plain|0d 0a|
+|20|HTTP/1.0|0d 0a|Host|3a|
+myguy
+|01 00 00 01 00 00 00 00 00 00|
+|10|v5t5z6a55ksmt3oh|05|
+|01 00 00 01 00 00 00 00 00 00|
+|10|ojdue4474qghybjb|05|
+|01 00 00 01 00 00 00 00 00 00|
+|0b|winupdate64|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|0e|twiter|2d|statics|04|info|00|
+|01 00 00 01 00 00 00 00 00 00|
+|12|cloudflare|2d|analyse|03|com|00|
+XXXXXXXXXXXXXXXXX/5.0 (Windows NT 6.1 WOW64|3b| Trident/7.0|3b| AS|3b| rv:11.0) like Gecko
+GET
+/sosdoudou_V3/
+WinHttp.WinHttpRequest
+POST
+.php
+keyauth=
+&key=
+&uid=
+WinHttpRequest
+POST
+.php
+mode=
+&data=
+&key=
+WinHttpRequest
+GET
+/action2/
+User-Agent|3a 20|Firefox|0d 0a|
+|23|command|23 23|systeminfo
+&&
+|01 00 00 01 00 00 00 00 00 00|
+|13|microsoft-publisher|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|07|stealur|04|info|00|
+|16|
+|01|
+|00 00 0c|bogerando.ru
+|01 00 00 01 00 00 00 00 00 00|
+|10|wgxpsgshk3hbmyzb
+|01 00 00 01 00 00 00 00 00 00|
+|10|tptbibuegry2nvuh
+|01 00 00 01 00 00 00 00 00 00|
+|10|fgb45ft3pqamyji7
+|01 00 00 01 00 00 00 00 00 00|
+|10|gebdp3k7bolalnd4
+|01 00 00 01 00 00 00 00 00 00|
+|10|2irbar3mjvbap6gt
+|01 00 00 01 00 00 00 00 00 00|
+|10|qg6m5wo7h3id55ym
+|01 00 00 01 00 00 00 00 00 00|
+|10|xvnk7q32kmvcvx5x
+|01 00 00 01 00 00 00 00 00 00|
+|10|xzfsqbdlb3cssp4t
+|01 00 00 01 00 00 00 00 00 00|
+|10|wqfhdgpdelcgww4g
+|01 00 00 01 00 00 00 00 00 00|
+|10|yvvu3fqglfceuzfu
+GET|20|
+.php?Hwid=S-
+|20|HTTP/1.1|0d 0a|Host|3a|
+|01 00 00 01 00 00 00 00 00 00|
+|03|api|0a|mughthesec|03|com|00|
+|01 00 00 01 00 00 00 00 00 00|
+|11|default27061330-a|08|akamaihd|03|net|00|
+POST
+.php
+User-Agent|3a|
+KAMA NT
+BULLET|3b|
+REGION|3b|
+200
+|58 1b 91 63 b8 aa 05 14 26 b5 4a 87 75 c1 a0 26 9e 3c 11 6e 71 42 96 26 99 7a 08 52 54 2f 31 7f 58 90 87 ef 21 eb 4d ac aa 62 d0 f5 9e 65 dd b1|
  Gator
  IST
 User-Agent|3a| Godzilla
@@ -34918,6 +35364,10 @@ User-Agent|3a 20|Microsoft Office
 application/hta|0d 0a|
 [shell]
 iconfile
+beef.websocket.send
+beef.encode.base64.encode
+GET /
+.js?BEEFHOOK=
 sp_password
 sp_delete_alert
 THCOWNZIIS!
@@ -53560,6 +54010,19 @@ Host|3a|
 )
 action=lostpassword
 substr{
+.php?
+option=
+view=
+layout=
+&list[fullordering]=
+/otrs/index.pl?Action=Installer
+POST
+multipart
+form-data
+ognl.OgnlContext
+DEFAULT_MEMBER_ACCESS
+java.lang.ProcessBuilder
+.start
 # ShellBOT
 ##################### IRC #######################
 Babcdefghijklmnopqrstuvwabcdefghi
