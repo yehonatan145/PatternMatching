@@ -46,7 +46,7 @@ And you want to measure the algorithms performance on them, and save the results
 
 So you need to run the following command in the terminal in the main directory:
 
-./exe -d Dictionaries/a.dict -d Dictionaries/b.dict -d Dictionaries/c.dict -s Streams/A.stream -s Streams/B.stream -o results.csv
+	./exe -d Dictionaries/a.dict -d Dictionaries/b.dict -d Dictionaries/c.dict -s Streams/A.stream -s Streams/B.stream -o results.csv
 
 (i.e. putting -d before every dictionary file, -s vefore every stream file, and -o before the output file name).
 (you can also put -v flag for verbose (more detailed output))
