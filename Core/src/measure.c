@@ -253,7 +253,7 @@ static void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stat
 	PerfEventGroupData* data = create_perf_events_data();
 
 	// start the measuring
-	printf("Measuring algorithm %s\n\n", mps_table[inst->algo].name);
+	printf("Measuring algorithm %s\n", mps_table[inst->algo].name);
 	perf_event_data_ioctl(data, PERF_EVENT_IOC_RESET);
 	for (i = 0; i < n_stream_files; ++i) {
 		size_t j;
@@ -297,7 +297,7 @@ static void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stat
 		close(fd);
 	}
 
-	printf("Finished measuring algorithm %s\n\n", mps_table[inst->algo].name);
+	printf("Finished measuring algorithm %s\n", mps_table[inst->algo].name);
 	
 	read_perf_events_results(data, stats);
 	stats->total_mem = mps_table[inst->algo].total_mem(inst->obj);

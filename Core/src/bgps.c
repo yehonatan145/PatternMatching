@@ -353,7 +353,7 @@ static int _bgps_vo_stage_upgrade(BGStruct* bg, size_t stage_num) {
 		} else if (!_bgps_add_vo(bg, stage_num + 1, vos->first.pos, vos->first.fp, &vos->first.r)) {
 			// There is a fingerprint collision, just wipe out the vos in that stage
 			bg->vos[stage_num + 1].n = 0;
-			fprintf(stderr, "fingerprint collision, at position %llu, wiping out the stage\n", vos->first.pos);
+			//fprintf(stderr, "fingerprint collision, at position %llu, wiping out the stage\n", vos->first.pos);
 		} else {
 			ret = 1;
 		}
@@ -434,7 +434,7 @@ static void _bg_add_to_first_stage(BGStruct* bg) {
 	fingerprint_t vo_fp = calc_fp_prefix(bg->current_fp, bg->fps[0], &vo_r, bg->p);
 	if (!_bgps_add_vo(bg, 0, vo_pos, vo_fp, &vo_r)) {
 		// fingerprint collision, just ignore the new vo (possible option is to wipe out first stage)
-		fprintf(stderr, "fingerprint collision, at position %llu\n", vo_pos);
+		//fprintf(stderr, "fingerprint collision, at position %llu\n", vo_pos);
 	}
 }
 
