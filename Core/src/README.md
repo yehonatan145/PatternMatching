@@ -18,21 +18,29 @@ For example, if we have the patterns: {abcdefg, cdefg, efg, afg, fg}, the tree w
 
                                 root
                                  |
-1 - fg                           | fg
+                                 | fg
                                  |
-2 - efg                          1
+                                 1
                                 / \
-3 - afg                      e /   \ a
+                             e /   \ a
                               /     \
-4 - cdefg                    2       3
+                             2       3
                              |
-5 - abcdefg               cd |
+                          cd |
                              |
                              4
                              |
                           ab |
                              |
                              5
+
+Where the patterns of the nodes are:
+* node 1 - fg
+* node 2 - efg
+* node 3 - afg
+* node 4 - cdefg
+* node 5 - abcdefg
+
 
 As you can see, if we have the longest pattern that matches at some position, then all the other pattern matching
 in the same position, is its suffixes, and the suffixes of a pattern is exactly all the nodes on the path from
@@ -57,10 +65,14 @@ All of the pattern tree implementation and definition is in "PatternsTree.h" & "
 ## Mps interface
 
 Every mps algo (Multi-Pattern Matching Algorithm) implement the same interface for searching patterns.
-The functions for the interface is saved in variable mps_table defined in "mps.h"
+
+The functions for the interface is saved in variable mps_table defined in "mps.h".
+
 The mps_table is an array of MpsElem where every algo have an index in the table representing it.
+
 The table is initialized in the function mps_table_setup in "mps.c".
-MpsElem have "name" member for the name of the algorithm and the following functions that every algo should implement:
+
+MpsElem have "name" member for the name of the algorithm and the following functions that every algo must implement:
 
 ### void* create()
 
@@ -76,7 +88,8 @@ and that is the reason we also give the length of the pattern.
 If you want to save the pattern, you should copy it, since the given pattern can change in memory
 (And be sure to use memcpy and not strcpy since strcpy stops on \x00 and you shouldn't)
 
-The pattern_id_t is primitive type, and therefore can be used with operators such as '=' & '=='
+The pattern_id_t is primitive type, and therefore can be used with operators such as '=' & '=='.
+
 The null_pattern_id variable represents non-pattern and you can use it to save that something is not a pattern
 
 ### void compile(void* obj)
@@ -86,7 +99,9 @@ Compile the mps object, making it ready to search in the stream (no more pattern
 ### pattern_id_t read_char(void* obj, char c)
 
 This function is called on every character arriving from the stream. (called only after compile was called)
+
 The function should return the pattern_id_t of the longest pattern matches the current position.
+
 If there is no matching pattern, return null_pattern_id
 
 ### void reset(void* obj)

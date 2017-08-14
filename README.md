@@ -9,7 +9,7 @@ all of the text at once like the usual pattern-matching model), and on every arr
 can say what patterns from the given dictionary matched the stream with their last character matching the current character.
 
 This model is great for internet traffic monitoring (i.e. discover known viruses by sniffing the internet traffic),
-because the list is viruses is known in advanced, and the traffic arriving is like a stream (packet by packet).
+because the list of viruses is known in advanced, and the traffic arriving is like a stream (packet by packet).
 
 This system can measure the performance of some Multi-Pattern Matching Streaming Algorithms, and their success rate
 (since some of the algorithms are rendom), and output the results to a csv file.
@@ -37,9 +37,11 @@ Lets say you have the next dictionary files in the Dictionaries directory:
 *  a.dict
 *  b.dict
 *  c.dict
+
 And you have the next stream files in the Stream directory:
 *  A.stream
 *  B.stream
+
 And you want to measure the algorithms performance on them, and save the results in results.csv
 
 So you need to run the following command in the terminal in the main directory:
