@@ -48,8 +48,12 @@ So you need to run the following command in the terminal in the main directory:
 
 	./exe -d Dictionaries/a.dict -d Dictionaries/b.dict -d Dictionaries/c.dict -s Streams/A.stream -s Streams/B.stream -o results.csv
 
-(i.e. putting -d before every dictionary file, -s vefore every stream file, and -o before the output file name).
-(you can also put -v flag for verbose (more detailed output))
+Flags:
+
+* -d before every dictionary file
+* -s before every stream file
+* -o before the output file (only one output file allowed)
+* -v (optional) for verbose mode (print more detailed output)
 
 Note that by putting several dictionary files, the algorithm get all the patterns in all of them as one dictionary.
 
