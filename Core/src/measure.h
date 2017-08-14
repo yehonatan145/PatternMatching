@@ -100,6 +100,7 @@ typedef struct instance_stats {
 	PerfEventGroupStats perf_groups_stats[N_PERF_GROUPS];
 	SuccessRate suc_rate;
 	size_t total_mem;
+	clock_t total_cycles;
 } InstanceStats;
 
 

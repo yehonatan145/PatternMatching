@@ -280,17 +280,21 @@ static void measure_single_instance_stats(MpsInstance* inst, InstanceStats* stat
 		}
 		do {
 			// Read chunk of size STREAM_BUFFER_SIZE from the stream and measure performance on it
+			clock_t begin, end;
 			len_read = read(fd, stream_buffer, STREAM_BUFFER_SIZE);
 			if (len_read == -1) {
 				fprintf(stderr, "can't read from stream file %s: %s\n", stream_files[i], strerror(errno));
 				FatalExit();
 			}
 			
+			begin = clock();
 			perf_event_data_ioctl(data, PERF_EVENT_IOC_ENABLE);
 			for (j = 0; j < len_read; ++j) {
 				algo_results[j] = read_char_func(obj, stream_buffer[j]);
 			}
 			perf_event_data_ioctl(data, PERF_EVENT_IOC_DISABLE);
+			end = clock();
+			stats->total_cycles += end - begin;
 
 			// perform the raliable alogirthm to discover real results, and measure success rate
 			for (j = 0; j < len_read; ++j) {
@@ -346,6 +350,7 @@ void write_stats_to_file(Conf* conf) {
 		fprintf(stderr, "failed to open results file %s: %s\n", conf->output_file_name, strerror(errno));
 	}
 	write(output_fd, "Algorithm", 9);
+	write(output_fd, ",Time (in secs)", 15);
 	write(output_fd, ",Total Memory Used", 18);
 	write(output_fd, ",False Positive Rate", 20);
 	write(output_fd, ",False Negative Rate", 20);
@@ -363,11 +368,22 @@ void write_stats_to_file(Conf* conf) {
 		mi = &conf->mps_instances[k];
 		algo = mi->algo;
 		sr = &is->suc_rate;
+
+		// write name
 		write(output_fd, mps_table[algo].name, strlen(mps_table[algo].name));
+
+		// write the total time
+		len = snprintf(buf, sizeof(buf), "%.6Lf", (long double)(is->total_cycles) / CLOCKS_PER_SEC);
+		write(output_fd, ",", 1);
+		write(output_fd, buf, len);
+
+		// write the total memory
 		total_mem = mps_table[algo].total_mem(mi->obj);
 		len = snprintf(buf, sizeof(buf), "%zu", total_mem);
 		write(output_fd, ",", 1);
 		write(output_fd, buf, len);
+
+		// write the accuracy statistics
 		sum = sr->success + sr->false_pos + sr->false_neg + sr->partial_suc;
 		len = snprintf(buf, sizeof(buf), "%.6Lf", (long double)sr->false_pos / sum);
 		write(output_fd, ",", 1);
@@ -379,6 +395,7 @@ void write_stats_to_file(Conf* conf) {
 		write(output_fd, ",", 1);
 		write(output_fd, buf, len);
 
+		// write the perf_event counters
 		for (i = 0; i < N_PERF_GROUPS; ++i) {
 			n = perf_events[i].n;
 			for (j = 0; j < n; ++j) {

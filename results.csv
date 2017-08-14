@@ -1,4 +1,4 @@
-Algorithm,Total Memory Used,False Positive Rate,False Negative Rate,Partial Success Rate,page faults,software cpu clock,software task clock,number of instructions,number of branch instructions,number of cycles,bus cycles,total cycles
-Aho-Corasick,1485093592,0.000000,0.000000,0.000000,20,1202020,1201077,824341,80746,1969428,115851,2780184
-Low-Memory Aho-Corasick,40137664,0.000000,0.000000,0.000000,43,15029645,15027258,7839863,2182059,16886476,1455433,34930392
-Multi-Pattern Breslauer-Galil,26423230,0.000000,0.000293,0.022754,5,132867242055,132867153411,124497392268,17798891306,333265498734,13200549521,316818204672
+Algorithm,Time (in secs),Total Memory Used,False Positive Rate,False Negative Rate,Partial Success Rate,page faults,software cpu clock,software task clock,number of instructions,number of branch instructions,number of cycles,bus cycles,total cycles
+Aho-Corasick,0.001172,1485093592,0.000000,0.000000,0.000000,20,1160880,1159477,824341,80746,1892200,111305,2671296
+Low-Memory Aho-Corasick,0.033228,40137664,0.000000,0.000000,0.000000,200,31489300,31504530,7840025,2182221,23344915,2753163,66071760
+Multi-Pattern Breslauer-Galil,150.245936,26423230,0.000000,0.000293,0.022754,31,150246030515,150245915537,124497415436,17798913607,302975568613,14894561999,357472863744
